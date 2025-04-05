@@ -38,7 +38,7 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
         {/* This is the hidden div that will be used for printing */}
         <div className="hidden print:block p-0 w-[8.5in] h-[11in] relative font-sans">
           {/* Top Voucher section */}
-          <div className="absolute top-0 left-0 right-0 h-[3.5in] p-4 border-b border-gray-300">
+          <div className="absolute top-0 left-0 right-0 h-[3.5in] p-4">
             <div className="absolute left-4 top-24">
               <div className="text-sm mb-1">Date: {formattedDate}</div>
               <div className="text-sm mb-1">Pay to the Order of: {payee}</div>
@@ -51,23 +51,23 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
 
           {/* Main check section (middle of page) - Only includes variable data */}
           <div className="absolute left-0 right-0 top-[3.5in] h-[3.5in]">
-            {/* Date field - moved to the left by 1 inch and up .5 inch */}
-            <div className="absolute right-[2.5in] top-[1in] text-sm">
+            {/* Date field - moved to the left by 1 inch and down .25 inch from previous position */}
+            <div className="absolute right-[2.5in] top-[1.25in] text-sm">
               {formattedDate}
             </div>
             
-            {/* Amount in numbers field - moved up .5 inch */}
-            <div className="absolute right-6 top-[1in] text-right text-sm font-bold">
+            {/* Amount in numbers field - moved left .5 inch and down .25 inch from previous position */}
+            <div className="absolute right-[0.5in] top-[1.25in] text-right text-sm font-bold">
               {formattedAmount}
             </div>
             
-            {/* Amount in words line - moved up .5 inch */}
-            <div className="absolute left-10 top-[1.5in] right-36 text-sm">
+            {/* Amount in words line - moved down .25 inch from previous position */}
+            <div className="absolute left-10 top-[1.75in] right-36 text-sm">
               {amountInWords}
             </div>
             
-            {/* Payee section - moved right .5 inch and up .5 inch */}
-            <div className="absolute left-[1.1in] top-[1.8in] text-sm">
+            {/* Payee section - moved down .25 inch from previous position */}
+            <div className="absolute left-[1.1in] top-[2.05in] text-sm">
               <div>{payee}</div>
               {fullAddress && <div>{fullAddress}</div>}
               {cityStateZip && <div>{cityStateZip}</div>}
@@ -117,24 +117,24 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
                 <div>Pre-printed check number</div>
               </div>
               
-              {/* Date - moved to the left by 1 inch and up .5 inch */}
-              <div className="absolute right-[40%] top-[20%] text-[7px]">
+              {/* Date - moved to the left by 1 inch and down .25 inch from previous position */}
+              <div className="absolute right-[40%] top-[25%] text-[7px]">
                 {formattedDate}
               </div>
               
-              {/* Amount - moved up .5 inch */}
-              <div className="absolute right-2 top-[20%] text-[7px] font-bold">
+              {/* Amount - moved left .5 inch and down .25 inch from previous position */}
+              <div className="absolute right-[10%] top-[25%] text-[7px] font-bold">
                 {formattedAmount}
               </div>
               
-              {/* Amount in words - moved up .5 inch */}
-              <div className="absolute left-4 right-8 top-[35%] text-[7px]">
+              {/* Amount in words - moved down .25 inch from previous position */}
+              <div className="absolute left-4 right-8 top-[40%] text-[7px]">
                 {amountInWords}
                 <div className="absolute top-[1px] left-[50%] right-0 border-b border-dotted border-gray-400 h-[1px]"></div>
               </div>
               
-              {/* Payee - moved right .5 inch and up .5 inch */}
-              <div className="absolute left-[25%] top-[45%] text-[7px]">
+              {/* Payee - moved down .25 inch from previous position */}
+              <div className="absolute left-[25%] top-[50%] text-[7px]">
                 {payee}<br />
                 {fullAddress && <span>{fullAddress}<br /></span>}
                 {cityStateZip && <span>{cityStateZip}</span>}
