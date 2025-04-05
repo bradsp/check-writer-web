@@ -55,8 +55,8 @@ const Index = () => {
         description: "The check was sent to your printer successfully.",
       });
     },
-    // Updated to use content function instead of direct ref property
-    content: () => checkPrintRef.current,
+    // The correct way to specify print content according to react-to-print
+    contentRef: checkPrintRef,
   });
 
   const handleFormSubmit = (formData: CheckFormData) => {
