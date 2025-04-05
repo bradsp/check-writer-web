@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import CheckForm from '@/components/CheckForm';
@@ -44,9 +45,9 @@ const Index = () => {
           description: "Please fill out all required fields with valid information.",
           variant: "destructive"
         });
-        return false;
+        return Promise.reject('Invalid check information');
       }
-      return true;
+      return Promise.resolve();
     },
     onAfterPrint: () => {
       toast({
