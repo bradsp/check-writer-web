@@ -38,7 +38,7 @@ const Index = () => {
   const handlePrint = useReactToPrint({
     contentRef: checkPrintRef,
     documentTitle: 'Check Print',
-    onBeforeGetContent: () => {
+    onBeforePrint: () => {
       // Validate before printing
       if (!date || !payee.trim() || !amount.trim() || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
         toast({
@@ -50,7 +50,7 @@ const Index = () => {
       }
       return Promise.resolve();
     },
-    onPrintError: () => {
+    onError: () => {
       toast({
         title: "Print Error",
         description: "There was a problem printing the check. Please try again.",
