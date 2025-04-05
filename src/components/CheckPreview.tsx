@@ -41,119 +41,175 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
         {/* This is the hidden div that will be used for printing */}
         <div className="hidden print:block p-0 w-[8.5in] h-[11in] relative font-sans">
           {/* Top Voucher section */}
-          <div className="absolute top-[1in] left-[1in] right-[0.5in]">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="text-sm mb-2">Date: {formattedDate}</div>
-                <div className="text-sm mb-2">Pay to the Order of: {payee}</div>
-                {fullAddress && <div className="text-sm">{fullAddress}</div>}
-                {cityStateZip && <div className="text-sm">{cityStateZip}</div>}
+          <div className="absolute top-0 left-0 right-0 h-[3.5in] p-4 border-b border-gray-300">
+            <div className="ml-6 mt-10">
+              <div className="text-sm mb-1">Date: {formattedDate}</div>
+              <div className="text-sm mb-1">Pay to the Order of: {payee}</div>
+              <div className="text-sm mb-1 max-w-[70%]">{memo}</div>
+              <div className="absolute right-8 top-10">
+                <div className="text-sm">Amount: {formattedAmount}</div>
               </div>
-              <div className="text-right">
-                <div className="text-sm mt-4">Amount: {formattedAmount}</div>
-              </div>
-            </div>
-            <div className="mt-2">
-              {memoLines.map((line, index) => (
-                <div key={`top-${index}`} className="text-sm">{line}</div>
-              ))}
             </div>
           </div>
 
-          {/* Main check section (middle of page) - Based on the image and Python code */}
-          <div className="absolute left-0 right-0 top-[4.5in] bottom-[3.5in]">
-            {/* Date position - right-aligned */}
-            <div className="absolute right-[2.5in] top-[0.4in]">
-              <span className="text-sm">{formattedDate}</span>
+          {/* Main check section (middle of page) */}
+          <div className="absolute left-0 right-0 top-[3.5in] h-[3.5in] border-y border-blue-400 bg-blue-50">
+            {/* Check header - sender info */}
+            <div className="absolute left-6 top-6 text-xs">
+              <div className="font-semibold">Bradley or Suzan Powers</div>
+              <div>21 Broadmoor</div>
+              <div>Jackson, TN 38305</div>
+            </div>
+
+            {/* Bank info - right side */}
+            <div className="absolute right-6 top-6 text-right text-xs">
+              <div className="font-semibold">Leaders Credit Union</div>
+              <div>211 Oil Well Rd</div>
+              <div>Jackson, TN 38305</div>
+              <div>www.leaderscu.com</div>
+            </div>
+
+            {/* Check number */}
+            <div className="absolute right-6 top-2 text-xs font-semibold">
+              4016
+            </div>
+
+            {/* Date field */}
+            <div className="absolute right-[2.5in] top-[1.2in] text-sm">
+              {formattedDate}
             </div>
             
-            {/* Amount in numbers position - right-aligned */}
-            <div className="absolute right-[0.5in] top-[0.4in]">
-              <span className="text-sm font-bold">{formattedAmount}</span>
+            {/* Amount in numbers field */}
+            <div className="absolute right-6 top-[1.2in] text-right text-sm font-bold">
+              {formattedAmount}
             </div>
             
-            {/* Payee section - positioned according to the Python code's payee_x and payee_y */}
-            <div className="absolute left-[1in] top-[1.25in] w-[4in]">
-              <span className="text-sm">{payee}</span>
-              {fullAddress && <div className="text-sm mt-1">{fullAddress}</div>}
-              {cityStateZip && <div className="text-sm">{cityStateZip}</div>}
+            {/* Amount in words line */}
+            <div className="absolute left-6 top-[1.5in] right-6 text-sm border-b border-gray-400">
+              {amountInWords}
             </div>
             
-            {/* Amount in words position - positioning to match the Python code */}
-            <div className="absolute left-[0.5in] top-[0.8in] right-[0.5in]">
-              <span className="text-sm">{amountInWords}</span>
+            {/* Payee section */}
+            <div className="absolute left-6 top-[1.8in] text-sm">
+              <div>{payee}</div>
+              {fullAddress && <div>{fullAddress}</div>}
+              {cityStateZip && <div>{cityStateZip}</div>}
             </div>
             
-            {/* Memo position - positioned to match the Python code's memo_y */}
-            <div className="absolute left-[0.5in] bottom-[0.75in]">
+            {/* Memo line */}
+            <div className="absolute left-6 bottom-10 text-xs">
               {memoLines.map((line, index) => (
-                <div key={index} className="text-xs">{line}</div>
+                <div key={index}>{line}</div>
               ))}
+            </div>
+
+            {/* Signature line */}
+            <div className="absolute right-6 bottom-6 w-[2in] border-t border-gray-500">
+              <div className="text-xs text-center mt-1">AUTHORIZED SIGNATURE</div>
+            </div>
+
+            {/* MICR line (check bottom line with numbers) */}
+            <div className="absolute bottom-2 left-6 right-6 text-xs font-mono tracking-wider">
+              c⁕040416⁕c c⁕284283864⁕c c⁕00005750⁕c
             </div>
           </div>
 
           {/* Bottom voucher section */}
-          <div className="absolute bottom-[1in] left-[1in] right-[0.5in]">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <div className="text-sm mb-2">Date: {formattedDate}</div>
-                <div className="text-sm mb-2">Pay to the Order of: {payee}</div>
-                {fullAddress && <div className="text-sm">{fullAddress}</div>}
-                {cityStateZip && <div className="text-sm">{cityStateZip}</div>}
+          <div className="absolute left-0 right-0 top-[7in] bottom-0 p-4">
+            <div className="ml-6 mt-10">
+              <div className="text-sm mb-1">Date: {formattedDate}</div>
+              <div className="text-sm mb-1">Pay to the Order of: {payee}</div>
+              <div className="text-sm mb-1 max-w-[70%]">{memo}</div>
+              <div className="absolute right-8 top-10">
+                <div className="text-sm">Amount: {formattedAmount}</div>
               </div>
-              <div className="text-right">
-                <div className="text-sm mt-4">Amount: {formattedAmount}</div>
-              </div>
-            </div>
-            <div className="mt-2">
-              {memoLines.map((line, index) => (
-                <div key={`bottom-${index}`} className="text-sm">{line}</div>
-              ))}
             </div>
           </div>
         </div>
 
         {/* This is the preview that is shown on screen */}
-        <div className="block print:hidden bg-white border rounded-md p-6 mt-4 mx-auto max-w-2xl">
+        <div className="block print:hidden bg-white border rounded-md p-6 mt-4 mx-auto max-w-4xl">
           <h3 className="text-lg font-semibold text-center mb-4 text-blue-600">Check Preview</h3>
           
-          {/* Check Preview - Styled to match the actual check image */}
-          <div className="bg-blue-50 p-4 rounded-md border-2 border-dashed border-blue-300 aspect-[2.125/1] relative mb-4">
-            <div className="absolute right-16 top-6">
-              <div className="text-sm text-gray-500">Date:</div>
-              <span className="text-sm font-medium">{formattedDate}</span>
+          {/* Preview of full check page */}
+          <div className="bg-white border-2 border-gray-300 rounded-md overflow-hidden w-full aspect-[8.5/11] flex flex-col">
+            {/* Top Voucher Preview */}
+            <div className="bg-gray-50 p-4 border-b border-gray-300 flex-1">
+              <div className="flex justify-between">
+                <div>
+                  <div className="text-xs mb-1">Date: {formattedDate}</div>
+                  <div className="text-xs mb-1">Pay to the Order of: {payee}</div>
+                  <div className="text-xs">{memo}</div>
+                </div>
+                <div>
+                  <div className="text-xs">Amount: {formattedAmount}</div>
+                </div>
+              </div>
             </div>
             
-            <div className="absolute right-6 top-6">
-              <div className="text-sm text-gray-500">Amount:</div>
-              <span className="text-sm font-bold">{formattedAmount || '$____.__'}</span>
+            {/* Check Preview */}
+            <div className="bg-blue-50 p-4 border-y border-blue-400 h-[30%] relative">
+              <div className="text-[8px] absolute left-2 top-2">
+                <div className="font-semibold">Bradley or Suzan Powers</div>
+                <div>21 Broadmoor</div>
+                <div>Jackson, TN 38305</div>
+              </div>
+              
+              <div className="text-[8px] absolute right-2 top-2 text-right">
+                <div className="font-semibold">Leaders Credit Union</div>
+                <div>211 Oil Well Rd</div>
+                <div>www.leaderscu.com</div>
+                <div className="font-bold">4016</div>
+              </div>
+              
+              <div className="absolute right-10 top-10 text-[8px]">
+                {formattedDate}
+              </div>
+              
+              <div className="absolute right-2 top-10 text-[8px] font-bold">
+                {formattedAmount}
+              </div>
+              
+              <div className="absolute left-2 top-14 right-2 text-[8px] border-b border-gray-400">
+                {amountInWords}
+              </div>
+              
+              <div className="absolute left-2 top-16 text-[8px]">
+                {payee}<br />
+                {fullAddress && <span>{fullAddress}<br /></span>}
+                {cityStateZip && <span>{cityStateZip}</span>}
+              </div>
+              
+              <div className="absolute right-2 bottom-2 w-16 border-t border-gray-500">
+                <div className="text-[6px] text-center">SIGNATURE</div>
+              </div>
+              
+              {memo && (
+                <div className="absolute left-2 bottom-2 text-[6px]">
+                  {memoLines[0]}
+                </div>
+              )}
             </div>
             
-            <div className="absolute left-8 top-[2.5rem]">
-              <div className="text-xs text-gray-500">PAY TO THE ORDER OF:</div>
-              <span className="text-sm font-medium">{payee || '____________'}</span>
-              {fullAddress && <div className="text-xs mt-1">{fullAddress}</div>}
-              {cityStateZip && <div className="text-xs">{cityStateZip}</div>}
-            </div>
-            
-            <div className="absolute left-6 top-[4.5rem] right-10">
-              <div className="text-xs text-gray-500">Amount in words:</div>
-              <span className="text-sm">{amountInWords || '____________'}</span>
-            </div>
-            
-            <div className="absolute left-6 bottom-8">
-              <div className="text-xs text-gray-500">Memo:</div>
-              <span className="text-xs">{memo || '____________'}</span>
-            </div>
-
-            <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 text-xs text-gray-400">
-              This is a preview. Actual print layout will match your check stock.
+            {/* Bottom Voucher Preview */}
+            <div className="bg-gray-50 p-4 flex-1">
+              <div className="flex justify-between">
+                <div>
+                  <div className="text-xs mb-1">Date: {formattedDate}</div>
+                  <div className="text-xs mb-1">Pay to the Order of: {payee}</div>
+                  <div className="text-xs">{memo}</div>
+                </div>
+                <div>
+                  <div className="text-xs">Amount: {formattedAmount}</div>
+                </div>
+              </div>
             </div>
           </div>
           
           {/* Bottom Note */}
-          <div className="text-sm text-center text-gray-600 mt-2">
+          <div className="text-sm text-center text-gray-600 mt-4">
             <p>For best results, place the check form in your printer with the top edge going in first.</p>
+            <p className="text-xs mt-1 text-blue-600">Note: Preview is scaled down. Actual printout will fit standard 8.5" x 11" check stock.</p>
           </div>
         </div>
       </div>
