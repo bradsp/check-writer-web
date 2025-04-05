@@ -104,7 +104,7 @@
 /* Print-specific styles */
 @media print {
   @page {
-    size: 8.5in 3.5in;
+    size: 8.5in 11in;
     margin: 0;
   }
   
