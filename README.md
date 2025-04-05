@@ -1,3 +1,4 @@
+
 # Welcome to your Lovable project
 
 ## Project info
@@ -36,19 +37,36 @@ npm i
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Running with Docker
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+If you prefer to use Docker for running the application, follow these steps:
 
-**Use GitHub Codespaces**
+```sh
+# Step 1: Build and start the container using Docker Compose
+docker-compose up -d
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Step 2: Access the application in your browser
+# The application will be available at http://localhost:8080
+```
+
+To stop the container:
+
+```sh
+docker-compose down
+```
+
+### Docker-specific commands
+
+```sh
+# To rebuild the image after making changes
+docker-compose build
+
+# To view container logs
+docker-compose logs -f
+
+# To restart the container
+docker-compose restart
+```
 
 ## What technologies are used for this project?
 
