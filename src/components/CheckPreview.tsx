@@ -50,24 +50,24 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
           </div>
 
           {/* Main check section (middle of page) - Only includes variable data */}
-          <div className="absolute left-0 right-0 top-[3.5in] h-[3.5in] border-y border-blue-400 bg-blue-50">
-            {/* Date field - positioned to align with DATE label on check */}
-            <div className="absolute right-[1.5in] top-[1.5in] text-sm">
+          <div className="absolute left-0 right-0 top-[3.5in] h-[3.5in]">
+            {/* Date field - moved to the left by 1 inch and up .5 inch */}
+            <div className="absolute right-[2.5in] top-[1in] text-sm">
               {formattedDate}
             </div>
             
-            {/* Amount in numbers field - positioned to align with AMOUNT label */}
-            <div className="absolute right-6 top-[1.5in] text-right text-sm font-bold">
+            {/* Amount in numbers field - moved up .5 inch */}
+            <div className="absolute right-6 top-[1in] text-right text-sm font-bold">
               {formattedAmount}
             </div>
             
-            {/* Amount in words line - positioned to match reference image */}
-            <div className="absolute left-10 top-[2.0in] right-36 text-sm">
+            {/* Amount in words line - moved up .5 inch */}
+            <div className="absolute left-10 top-[1.5in] right-36 text-sm">
               {amountInWords}
             </div>
             
-            {/* Payee section - positioned to match "PAY TO THE ORDER OF" label */}
-            <div className="absolute left-10 top-[2.3in] text-sm">
+            {/* Payee section - moved right .5 inch and up .5 inch */}
+            <div className="absolute left-[1.1in] top-[1.8in] text-sm">
               <div>{payee}</div>
               {fullAddress && <div>{fullAddress}</div>}
               {cityStateZip && <div>{cityStateZip}</div>}
@@ -117,24 +117,24 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
                 <div>Pre-printed check number</div>
               </div>
               
-              {/* Date - positioned to match reference image */}
-              <div className="absolute right-16 top-[30%] text-[7px]">
+              {/* Date - moved to the left by 1 inch and up .5 inch */}
+              <div className="absolute right-[40%] top-[20%] text-[7px]">
                 {formattedDate}
               </div>
               
-              {/* Amount - positioned to match reference image */}
-              <div className="absolute right-2 top-[30%] text-[7px] font-bold">
+              {/* Amount - moved up .5 inch */}
+              <div className="absolute right-2 top-[20%] text-[7px] font-bold">
                 {formattedAmount}
               </div>
               
-              {/* Amount in words - positioned to match reference image */}
-              <div className="absolute left-4 right-8 top-[45%] text-[7px]">
+              {/* Amount in words - moved up .5 inch */}
+              <div className="absolute left-4 right-8 top-[35%] text-[7px]">
                 {amountInWords}
                 <div className="absolute top-[1px] left-[50%] right-0 border-b border-dotted border-gray-400 h-[1px]"></div>
               </div>
               
-              {/* Payee - positioned to match reference image */}
-              <div className="absolute left-4 top-[55%] text-[7px]">
+              {/* Payee - moved right .5 inch and up .5 inch */}
+              <div className="absolute left-[25%] top-[45%] text-[7px]">
                 {payee}<br />
                 {fullAddress && <span>{fullAddress}<br /></span>}
                 {cityStateZip && <span>{cityStateZip}</span>}
