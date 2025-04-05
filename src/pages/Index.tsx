@@ -55,7 +55,7 @@ const Index = () => {
         description: "The check was sent to your printer successfully.",
       });
     },
-    // Use printRef to specify the content to be printed
+    // Updated to use content function instead of direct ref property
     content: () => checkPrintRef.current,
   });
 
