@@ -36,7 +36,7 @@ const Index = () => {
     : '';
 
   const handlePrint = useReactToPrint({
-    content: () => checkPrintRef.current,
+    contentRef: checkPrintRef,
     documentTitle: 'Check Print',
     onBeforeGetContent: () => {
       // Validate before printing
