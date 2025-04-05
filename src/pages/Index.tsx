@@ -4,13 +4,27 @@ import { useReactToPrint } from 'react-to-print';
 import CheckForm from '@/components/CheckForm';
 import CheckPreview from '@/components/CheckPreview';
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
 import { numberToWords } from '@/utils/numberToWords';
+
+interface CheckFormData {
+  date: string;
+  payee: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  amount: string;
+  memo: string;
+}
 
 const Index = () => {
   const { toast } = useToast();
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [payee, setPayee] = useState<string>('');
+  const [address, setAddress] = useState<string>('');
+  const [city, setCity] = useState<string>('');
+  const [state, setState] = useState<string>('');
+  const [zipCode, setZipCode] = useState<string>('');
   const [amount, setAmount] = useState<string>('');
   const [memo, setMemo] = useState<string>('');
   const [showPreview, setShowPreview] = useState<boolean>(false);
@@ -51,20 +65,24 @@ const Index = () => {
     },
   });
 
-  const handleFormSubmit = (formData: { date: string; payee: string; amount: string; memo: string }) => {
+  const handleFormSubmit = (formData: CheckFormData) => {
     // Update state with form data
     setDate(formData.date);
     setPayee(formData.payee);
+    setAddress(formData.address);
+    setCity(formData.city);
+    setState(formData.state);
+    setZipCode(formData.zipCode);
     setAmount(formData.amount);
     setMemo(formData.memo);
     
     // Show preview first
     setShowPreview(true);
     
-    // Then trigger print after a short delay to ensure state is updated
+    // Then trigger print after a longer delay to ensure state is updated
     setTimeout(() => {
       handlePrint();
-    }, 300);
+    }, 500);
   };
 
   return (
@@ -79,7 +97,16 @@ const Index = () => {
           {/* Form to collect check information */}
           <CheckForm 
             onPrint={handleFormSubmit}
-            initialValues={{ date, payee, amount, memo }}
+            initialValues={{ 
+              date, 
+              payee, 
+              address, 
+              city, 
+              state, 
+              zipCode, 
+              amount, 
+              memo 
+            }}
           />
           
           {/* Hidden element for printing */}
@@ -88,6 +115,10 @@ const Index = () => {
               ref={checkPrintRef}
               date={date}
               payee={payee}
+              address={address}
+              city={city}
+              state={state}
+              zipCode={zipCode}
               amount={amount}
               amountInWords={amountInWords}
               memo={memo}

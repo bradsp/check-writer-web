@@ -7,16 +7,32 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { numberToWords, formatCurrency } from "@/utils/numberToWords";
 
-interface CheckFormProps {
-  onPrint: () => void;
+interface CheckFormValues {
+  date: string;
+  payee: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  amount: string;
+  memo: string;
 }
 
-const CheckForm: React.FC<CheckFormProps> = ({ onPrint }) => {
+interface CheckFormProps {
+  onPrint: (values: CheckFormValues) => void;
+  initialValues?: CheckFormValues;
+}
+
+const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) => {
   const { toast } = useToast();
-  const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
-  const [payee, setPayee] = useState<string>('');
-  const [amount, setAmount] = useState<string>('');
-  const [memo, setMemo] = useState<string>('');
+  const [date, setDate] = useState<string>(initialValues.date || new Date().toISOString().split('T')[0]);
+  const [payee, setPayee] = useState<string>(initialValues.payee || '');
+  const [address, setAddress] = useState<string>(initialValues.address || '');
+  const [city, setCity] = useState<string>(initialValues.city || '');
+  const [state, setState] = useState<string>(initialValues.state || '');
+  const [zipCode, setZipCode] = useState<string>(initialValues.zipCode || '');
+  const [amount, setAmount] = useState<string>(initialValues.amount || '');
+  const [memo, setMemo] = useState<string>(initialValues.memo || '');
   const [amountInWords, setAmountInWords] = useState<string>('');
   const amountInputRef = useRef<HTMLInputElement>(null);
 
@@ -71,13 +87,26 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint }) => {
 
   const handlePrintClick = () => {
     if (validateForm()) {
-      onPrint();
+      onPrint({
+        date,
+        payee,
+        address,
+        city,
+        state,
+        zipCode,
+        amount,
+        memo
+      });
     }
   };
 
   const handleClear = () => {
     setDate(new Date().toISOString().split('T')[0]);
     setPayee('');
+    setAddress('');
+    setCity('');
+    setState('');
+    setZipCode('');
     setAmount('');
     setMemo('');
     setAmountInWords('');
@@ -85,7 +114,7 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint }) => {
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader className="bg-check-blue text-white rounded-t-lg">
+      <CardHeader className="bg-blue-600 text-white rounded-t-lg">
         <CardTitle className="text-xl font-bold">Check Writer</CardTitle>
         <CardDescription className="text-gray-100">Enter check details below</CardDescription>
       </CardHeader>
@@ -125,6 +154,51 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint }) => {
           />
         </div>
         
+        {/* Address Fields */}
+        <div className="space-y-2">
+          <Label htmlFor="address">Address</Label>
+          <Input
+            id="address"
+            type="text"
+            placeholder="Street Address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="city">City</Label>
+            <Input
+              id="city"
+              type="text"
+              placeholder="City"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="state">State</Label>
+            <Input
+              id="state"
+              type="text"
+              placeholder="State"
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="zipCode">Zip Code</Label>
+            <Input
+              id="zipCode"
+              type="text"
+              placeholder="Zip Code"
+              value={zipCode}
+              onChange={(e) => setZipCode(e.target.value)}
+            />
+          </div>
+        </div>
+        
         <div className="space-y-2">
           <Label htmlFor="amountWords">Amount in Words</Label>
           <div className="p-2 border rounded-md bg-gray-50 min-h-10">
@@ -151,7 +225,7 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint }) => {
         <Button variant="outline" onClick={handleClear}>Clear Form</Button>
         <Button 
           onClick={handlePrintClick} 
-          className="bg-check-blue hover:bg-check-darkBlue"
+          className="bg-blue-600 hover:bg-blue-700"
         >
           Print Check
         </Button>
