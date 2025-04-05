@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import CheckForm from '@/components/CheckForm';
@@ -37,7 +36,7 @@ const Index = () => {
 
   const handlePrint = useReactToPrint({
     documentTitle: 'Check Print',
-    onBeforeGetContent: () => {
+    onBeforePrint: () => {
       // Validate before printing
       if (!date || !payee.trim() || !amount.trim() || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
         toast({
@@ -45,16 +44,9 @@ const Index = () => {
           description: "Please fill out all required fields with valid information.",
           variant: "destructive"
         });
-        return Promise.reject('Invalid check information');
+        return false;
       }
-      return Promise.resolve();
-    },
-    onPrintError: () => {
-      toast({
-        title: "Print Error",
-        description: "There was a problem printing the check. Please try again.",
-        variant: "destructive"
-      });
+      return true;
     },
     onAfterPrint: () => {
       toast({
@@ -62,8 +54,8 @@ const Index = () => {
         description: "The check was sent to your printer successfully.",
       });
     },
-    // Use printRef instead of content for the content to be printed
-    printRef: checkPrintRef,
+    // Use printRef to specify the content to be printed
+    content: () => checkPrintRef.current,
   });
 
   const handleFormSubmit = (formData: CheckFormData) => {
