@@ -39,11 +39,11 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
         <div className="hidden print:block p-0 w-[8.5in] h-[11in] relative font-sans">
           {/* Top Voucher section */}
           <div className="absolute top-0 left-0 right-0 h-[3.5in] p-4 border-b border-gray-300">
-            <div className="absolute right-6 top-24">
+            <div className="absolute left-4 top-24">
               <div className="text-sm mb-1">Date: {formattedDate}</div>
               <div className="text-sm mb-1">Pay to the Order of: {payee}</div>
               <div className="text-sm mb-1 max-w-[70%]">{memo}</div>
-              <div className="absolute right-8 top-0">
+              <div className="absolute right-0 top-0">
                 <div className="text-sm">Amount: {formattedAmount}</div>
               </div>
             </div>
@@ -76,11 +76,11 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
 
           {/* Bottom voucher section */}
           <div className="absolute left-0 right-0 top-[7in] bottom-0 p-4">
-            <div className="absolute right-6 top-24">
+            <div className="absolute left-4 top-24">
               <div className="text-sm mb-1">Date: {formattedDate}</div>
               <div className="text-sm mb-1">Pay to the Order of: {payee}</div>
               <div className="text-sm mb-1 max-w-[70%]">{memo}</div>
-              <div className="absolute right-8 top-0">
+              <div className="absolute right-0 top-0">
                 <div className="text-sm">Amount: {formattedAmount}</div>
               </div>
             </div>
@@ -95,7 +95,7 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
           <div className="bg-white border-2 border-gray-300 rounded-md overflow-hidden w-full aspect-[8.5/11] flex flex-col">
             {/* Top Voucher Preview */}
             <div className="bg-gray-50 p-4 border-b border-gray-300 flex-1 relative">
-              <div className="absolute right-4 top-16">
+              <div className="absolute left-4 top-16">
                 <div className="text-xs mb-1">Date: {formattedDate}</div>
                 <div className="text-xs mb-1">Pay to the Order of: {payee}</div>
                 <div className="text-xs">{memo}</div>
@@ -148,7 +148,7 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
             
             {/* Bottom Voucher Preview */}
             <div className="bg-gray-50 p-4 flex-1 relative">
-              <div className="absolute right-4 top-16">
+              <div className="absolute left-4 top-16">
                 <div className="text-xs mb-1">Date: {formattedDate}</div>
                 <div className="text-xs mb-1">Pay to the Order of: {payee}</div>
                 <div className="text-xs">{memo}</div>
