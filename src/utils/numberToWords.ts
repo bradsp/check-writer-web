@@ -56,16 +56,19 @@ export function numberToWords(num: number): string {
   
   result += convertLessThanOneThousand(wholeNum % 1000);
   
-  // Format the result
+  // Format the result - First letter capitalized
   result = result.trim();
   if (result) result = result.charAt(0).toUpperCase() + result.slice(1);
   
-  // Add cents
+  // Format cents exactly like the Python code
   if (cents > 0) {
     result += ' and ' + cents + '/100';
   } else {
     result += ' and 00/100';
   }
+  
+  // Add "Dollars" to match typical check format
+  result += ' Dollars';
   
   return result;
 }

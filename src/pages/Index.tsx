@@ -22,8 +22,8 @@ const Index = () => {
     : '';
 
   const handlePrint = useReactToPrint({
-    content: () => checkPrintRef.current,
-    onBeforeGetContent: () => {
+    documentTitle: 'Check Print',
+    onBeforePrint: () => {
       // Validate again before printing
       if (!date || !payee.trim() || !amount.trim() || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
         return Promise.reject('Invalid check information');
@@ -43,6 +43,8 @@ const Index = () => {
         description: "The check was sent to your printer successfully.",
       });
     },
+    // Use contentRef instead of content function for react-to-print v3.0.0+
+    contentRef: checkPrintRef,
   });
 
   const handleFormSubmit = () => {
