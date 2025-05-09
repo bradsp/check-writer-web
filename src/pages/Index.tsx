@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import CheckForm from '@/components/CheckForm';
@@ -60,7 +59,6 @@ const Index = () => {
     contentRef: checkPrintRef,
     // Prevent multiple pages from being printed
     pageStyle: "@page { size: 8.5in 11in; margin: 0mm; } @page { page-break-after: avoid; }",
-    removeAfterPrint: false
   });
 
   const handleFormSubmit = (formData: CheckFormData) => {
