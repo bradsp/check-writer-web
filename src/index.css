@@ -123,5 +123,13 @@
     top: 0;
     width: 100%;
     height: 100%;
+    overflow: hidden; /* Prevent content overflow that might cause extra pages */
+    page-break-after: avoid; /* Prevent page breaks after the element */
+  }
+  
+  /* Ensure no extra content is printed */
+  .check-preview::after {
+    content: "";
+    display: none;
   }
 }

@@ -56,8 +56,11 @@ const Index = () => {
         description: "The check was sent to your printer successfully.",
       });
     },
-    // The correct way to specify print content according to react-to-print
+    // Specify print content
     contentRef: checkPrintRef,
+    // Prevent multiple pages from being printed
+    pageStyle: "@page { size: 8.5in 11in; margin: 0mm; } @page { page-break-after: avoid; }",
+    removeAfterPrint: false
   });
 
   const handleFormSubmit = (formData: CheckFormData) => {
@@ -74,7 +77,7 @@ const Index = () => {
     // Show preview first
     setShowPreview(true);
     
-    // Then trigger print after a longer delay to ensure state is updated
+    // Then trigger print after a delay to ensure state is updated
     setTimeout(() => {
       handlePrint();
     }, 500);

@@ -50,8 +50,8 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
 
     return (
       <div ref={ref} className="check-preview">
-        {/* This is the hidden div that will be used for printing */}
-        <div className="hidden print:block p-0 w-[8.5in] h-[11in] relative font-sans">
+        {/* This is the hidden div that will be used for printing - contained to one page */}
+        <div className="hidden print:block p-0 w-[8.5in] h-[11in] relative font-sans overflow-hidden">
           {/* Top Voucher section */}
           <div className="absolute top-0 left-0 right-0 h-[3.5in] p-4">
             <div className="absolute left-4 top-24">
