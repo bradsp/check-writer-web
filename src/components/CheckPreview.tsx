@@ -33,6 +33,21 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
       zipCode
     ].join('');
 
+    // Pad the amount in words with asterisks for security
+    const padWithAsterisks = (text: string): string => {
+      const maxLength = 80; // Approximate max characters in the amount line
+      if (!text) return '';
+      
+      const padLength = maxLength - text.length;
+      if (padLength <= 0) return text;
+      
+      const padding = '*'.repeat(padLength);
+      return `${text} ${padding}`;
+    };
+
+    // Padded amount in words
+    const paddedAmountInWords = padWithAsterisks(amountInWords);
+
     return (
       <div ref={ref} className="check-preview">
         {/* This is the hidden div that will be used for printing */}
@@ -62,8 +77,8 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
             </div>
             
             {/* Amount in words line - moved down .25 inch from previous position */}
-            <div className="absolute left-10 top-[1.75in] right-36 text-sm">
-              {amountInWords}
+            <div className="absolute left-10 top-[1.75in] right-36 text-sm font-mono">
+              {paddedAmountInWords}
             </div>
             
             {/* Payee section - moved down .25 inch from previous position */}
@@ -128,8 +143,8 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
               </div>
               
               {/* Amount in words - moved down .25 inch from previous position */}
-              <div className="absolute left-4 right-8 top-[40%] text-[7px]">
-                {amountInWords}
+              <div className="absolute left-4 right-8 top-[40%] text-[7px] font-mono">
+                {paddedAmountInWords}
                 <div className="absolute top-[1px] left-[50%] right-0 border-b border-dotted border-gray-400 h-[1px]"></div>
               </div>
               

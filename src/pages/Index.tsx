@@ -31,6 +31,7 @@ const Index = () => {
   
   const checkPrintRef = useRef<HTMLDivElement>(null);
 
+  // Generate the amount in words
   const amountInWords = amount && !isNaN(parseFloat(amount)) 
     ? numberToWords(parseFloat(amount)) 
     : '';

@@ -34,7 +34,20 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
   const [amount, setAmount] = useState<string>(initialValues.amount || '');
   const [memo, setMemo] = useState<string>(initialValues.memo || '');
   const [amountInWords, setAmountInWords] = useState<string>('');
+  const [paddedAmountInWords, setPaddedAmountInWords] = useState<string>('');
   const amountInputRef = useRef<HTMLInputElement>(null);
+
+  // Function to pad the amount in words with asterisks
+  const padWithAsterisks = (text: string): string => {
+    const maxLength = 80; // Approximate max characters in the amount line
+    if (!text) return '';
+    
+    const padLength = maxLength - text.length;
+    if (padLength <= 0) return text;
+    
+    const padding = '*'.repeat(padLength);
+    return `${text} ${padding}`;
+  };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -44,9 +57,12 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
       
       // Update the amount in words when a valid number is entered
       if (value && !isNaN(parseFloat(value))) {
-        setAmountInWords(numberToWords(parseFloat(value)));
+        const words = numberToWords(parseFloat(value));
+        setAmountInWords(words);
+        setPaddedAmountInWords(padWithAsterisks(words));
       } else {
         setAmountInWords('');
+        setPaddedAmountInWords('');
       }
     }
   };
@@ -110,6 +126,7 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
     setAmount('');
     setMemo('');
     setAmountInWords('');
+    setPaddedAmountInWords('');
   };
 
   return (
@@ -201,11 +218,11 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
         
         <div className="space-y-2">
           <Label htmlFor="amountWords">Amount in Words</Label>
-          <div className="p-2 border rounded-md bg-gray-50 min-h-10">
-            {amountInWords ? (
-              <p className="font-medium text-gray-700">{amountInWords}</p>
+          <div className="p-2 border rounded-md bg-gray-50 min-h-10 font-mono">
+            {paddedAmountInWords ? (
+              <p className="font-medium text-gray-700">{paddedAmountInWords}</p>
             ) : (
-              <p className="text-gray-400 italic">Amount will appear here in words</p>
+              <p className="text-gray-400 italic">Amount will appear here in words with security padding</p>
             )}
           </div>
         </div>
