@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { numberToWords, formatCurrency } from "@/utils/numberToWords";
+import { sanitizeText, validateAmount, validateDate, validatePayee, VALIDATION_RULES } from "@/utils/validation";
 
 interface CheckFormValues {
   date: string;
@@ -51,15 +52,21 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Only allow numbers and a single decimal point
+    // Only allow numbers and a single decimal point during typing
     if (/^$|^[0-9]+(\.[0-9]*)?$/.test(value)) {
       setAmount(value);
-      
-      // Update the amount in words when a valid number is entered
-      if (value && !isNaN(parseFloat(value))) {
-        const words = numberToWords(parseFloat(value));
-        setAmountInWords(words);
-        setPaddedAmountInWords(padWithAsterisks(words));
+
+      // Validate and update the amount in words when a valid number is entered
+      if (value) {
+        const validation = validateAmount(value);
+        if (validation.isValid && validation.normalized) {
+          const words = numberToWords(parseFloat(validation.normalized));
+          setAmountInWords(words);
+          setPaddedAmountInWords(padWithAsterisks(words));
+        } else {
+          setAmountInWords('');
+          setPaddedAmountInWords('');
+        }
       } else {
         setAmountInWords('');
         setPaddedAmountInWords('');
@@ -68,28 +75,34 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
   };
 
   const validateForm = (): boolean => {
-    if (!date) {
-      toast({ 
-        title: "Date Required", 
-        description: "Please enter a valid date for the check.",
+    // Validate date
+    const dateValidation = validateDate(date);
+    if (!dateValidation.isValid) {
+      toast({
+        title: "Invalid Date",
+        description: dateValidation.error || "Please enter a valid date.",
         variant: "destructive"
       });
       return false;
     }
-    
-    if (!payee.trim()) {
-      toast({ 
-        title: "Payee Required", 
-        description: "Please enter the payee name.",
+
+    // Validate payee
+    const payeeValidation = validatePayee(payee);
+    if (!payeeValidation.isValid) {
+      toast({
+        title: "Invalid Payee",
+        description: payeeValidation.error || "Please enter a valid payee name.",
         variant: "destructive"
       });
       return false;
     }
-    
-    if (!amount.trim() || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
-      toast({ 
-        title: "Valid Amount Required", 
-        description: "Please enter a valid amount greater than zero.",
+
+    // Validate amount
+    const amountValidation = validateAmount(amount);
+    if (!amountValidation.isValid) {
+      toast({
+        title: "Invalid Amount",
+        description: amountValidation.error || "Please enter a valid amount.",
         variant: "destructive"
       });
       if (amountInputRef.current) {
@@ -97,7 +110,7 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
       }
       return false;
     }
-    
+
     return true;
   };
 
@@ -167,7 +180,8 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
             type="text"
             placeholder="Recipient or Company Name"
             value={payee}
-            onChange={(e) => setPayee(e.target.value)}
+            onChange={(e) => setPayee(sanitizeText(e.target.value))}
+            maxLength={VALIDATION_RULES.PAYEE_MAX_LENGTH}
           />
         </div>
         
@@ -179,7 +193,8 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
             type="text"
             placeholder="Street Address"
             value={address}
-            onChange={(e) => setAddress(e.target.value)}
+            onChange={(e) => setAddress(sanitizeText(e.target.value))}
+            maxLength={VALIDATION_RULES.ADDRESS_MAX_LENGTH}
           />
         </div>
         
@@ -191,7 +206,8 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
               type="text"
               placeholder="City"
               value={city}
-              onChange={(e) => setCity(e.target.value)}
+              onChange={(e) => setCity(sanitizeText(e.target.value))}
+              maxLength={VALIDATION_RULES.CITY_MAX_LENGTH}
             />
           </div>
           <div className="space-y-2">
@@ -201,7 +217,8 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
               type="text"
               placeholder="State"
               value={state}
-              onChange={(e) => setState(e.target.value)}
+              onChange={(e) => setState(sanitizeText(e.target.value))}
+              maxLength={VALIDATION_RULES.STATE_MAX_LENGTH}
             />
           </div>
           <div className="space-y-2">
@@ -211,7 +228,8 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
               type="text"
               placeholder="Zip Code"
               value={zipCode}
-              onChange={(e) => setZipCode(e.target.value)}
+              onChange={(e) => setZipCode(sanitizeText(e.target.value))}
+              maxLength={VALIDATION_RULES.ZIP_MAX_LENGTH}
             />
           </div>
         </div>
@@ -234,7 +252,8 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
             type="text"
             placeholder="For invoice #1234, etc."
             value={memo}
-            onChange={(e) => setMemo(e.target.value)}
+            onChange={(e) => setMemo(sanitizeText(e.target.value))}
+            maxLength={VALIDATION_RULES.MEMO_MAX_LENGTH}
           />
         </div>
       </CardContent>

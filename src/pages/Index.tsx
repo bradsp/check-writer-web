@@ -4,6 +4,7 @@ import CheckForm from '@/components/CheckForm';
 import CheckPreview from '@/components/CheckPreview';
 import { useToast } from "@/components/ui/use-toast";
 import { numberToWords } from '@/utils/numberToWords';
+import { validateDate, validatePayee, validateAmount } from '@/utils/validation';
 
 interface CheckFormData {
   date: string;
@@ -38,15 +39,39 @@ const Index = () => {
   const handlePrint = useReactToPrint({
     documentTitle: 'Check Print',
     onBeforePrint: () => {
-      // Validate before printing
-      if (!date || !payee.trim() || !amount.trim() || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
+      // Validate date
+      const dateValidation = validateDate(date);
+      if (!dateValidation.isValid) {
         toast({
-          title: "Invalid Input",
-          description: "Please fill out all required fields with valid information.",
+          title: "Invalid Date",
+          description: dateValidation.error || "Please enter a valid date.",
           variant: "destructive"
         });
-        return Promise.reject('Invalid check information');
+        return Promise.reject('Invalid date');
       }
+
+      // Validate payee
+      const payeeValidation = validatePayee(payee);
+      if (!payeeValidation.isValid) {
+        toast({
+          title: "Invalid Payee",
+          description: payeeValidation.error || "Please enter a valid payee name.",
+          variant: "destructive"
+        });
+        return Promise.reject('Invalid payee');
+      }
+
+      // Validate amount
+      const amountValidation = validateAmount(amount);
+      if (!amountValidation.isValid) {
+        toast({
+          title: "Invalid Amount",
+          description: amountValidation.error || "Please enter a valid amount.",
+          variant: "destructive"
+        });
+        return Promise.reject('Invalid amount');
+      }
+
       return Promise.resolve();
     },
     onAfterPrint: () => {

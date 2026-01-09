@@ -1,5 +1,6 @@
 
 import React, { forwardRef } from 'react';
+import { sanitizeText } from '@/utils/validation';
 
 interface CheckPreviewProps {
   date: string;
@@ -15,22 +16,30 @@ interface CheckPreviewProps {
 
 const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
   ({ date, payee, address, city, state, zipCode, amount, amountInWords, memo }, ref) => {
+    // Sanitize all text inputs (defense in depth)
+    const sanitizedPayee = sanitizeText(payee);
+    const sanitizedAddress = sanitizeText(address);
+    const sanitizedCity = sanitizeText(city);
+    const sanitizedState = sanitizeText(state);
+    const sanitizedZipCode = sanitizeText(zipCode);
+    const sanitizedMemo = sanitizeText(memo);
+
     // Format date to MM/DD/YYYY
     const formattedDate = date ? new Date(date).toLocaleDateString('en-US') : '';
-    
+
     // Format amount with dollar sign and 2 decimal places
-    const formattedAmount = amount 
+    const formattedAmount = amount
       ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(parseFloat(amount))
       : '';
 
-    // Full address formatted
-    const fullAddress = address ? `${address}` : '';
+    // Full address formatted using sanitized values
+    const fullAddress = sanitizedAddress ? `${sanitizedAddress}` : '';
     const cityStateZip = [
-      city, 
-      (city && state) ? ', ' : '', 
-      state, 
-      (zipCode && (city || state)) ? ' ' : '', 
-      zipCode
+      sanitizedCity,
+      (sanitizedCity && sanitizedState) ? ', ' : '',
+      sanitizedState,
+      (sanitizedZipCode && (sanitizedCity || sanitizedState)) ? ' ' : '',
+      sanitizedZipCode
     ].join('');
 
     // Pad the amount in words with asterisks for security
@@ -56,8 +65,8 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
           <div className="absolute top-0 left-0 right-0 h-[3.5in] p-4">
             <div className="absolute left-4 top-24">
               <div className="text-sm mb-1">Date: {formattedDate}</div>
-              <div className="text-sm mb-1">Pay to the Order of: {payee}</div>
-              <div className="text-sm mb-1 max-w-[70%]">{memo}</div>
+              <div className="text-sm mb-1">Pay to the Order of: {sanitizedPayee}</div>
+              <div className="text-sm mb-1 max-w-[70%]">{sanitizedMemo}</div>
               <div className="absolute right-0 top-0">
                 <div className="text-sm">Amount: {formattedAmount}</div>
               </div>
@@ -83,7 +92,7 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
             
             {/* Payee section - moved down .25 inch from previous position */}
             <div className="absolute left-[1.1in] top-[2.05in] text-sm">
-              <div>{payee}</div>
+              <div>{sanitizedPayee}</div>
               {fullAddress && <div>{fullAddress}</div>}
               {cityStateZip && <div>{cityStateZip}</div>}
             </div>
@@ -93,8 +102,8 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
           <div className="absolute left-0 right-0 top-[7in] bottom-0 p-4">
             <div className="absolute left-4 top-24">
               <div className="text-sm mb-1">Date: {formattedDate}</div>
-              <div className="text-sm mb-1">Pay to the Order of: {payee}</div>
-              <div className="text-sm mb-1 max-w-[70%]">{memo}</div>
+              <div className="text-sm mb-1">Pay to the Order of: {sanitizedPayee}</div>
+              <div className="text-sm mb-1 max-w-[70%]">{sanitizedMemo}</div>
               <div className="absolute right-0 top-0">
                 <div className="text-sm">Amount: {formattedAmount}</div>
               </div>
@@ -112,8 +121,8 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
             <div className="bg-gray-50 p-4 border-b border-gray-300 flex-1 relative">
               <div className="absolute left-4 top-16">
                 <div className="text-xs mb-1">Date: {formattedDate}</div>
-                <div className="text-xs mb-1">Pay to the Order of: {payee}</div>
-                <div className="text-xs">{memo}</div>
+                <div className="text-xs mb-1">Pay to the Order of: {sanitizedPayee}</div>
+                <div className="text-xs">{sanitizedMemo}</div>
                 <div className="absolute right-0 top-0">
                   <div className="text-xs">Amount: {formattedAmount}</div>
                 </div>
@@ -150,7 +159,7 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
               
               {/* Payee - moved down .25 inch from previous position */}
               <div className="absolute left-[25%] top-[50%] text-[7px]">
-                {payee}<br />
+                {sanitizedPayee}<br />
                 {fullAddress && <span>{fullAddress}<br /></span>}
                 {cityStateZip && <span>{cityStateZip}</span>}
               </div>
@@ -165,8 +174,8 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
             <div className="bg-gray-50 p-4 flex-1 relative">
               <div className="absolute left-4 top-16">
                 <div className="text-xs mb-1">Date: {formattedDate}</div>
-                <div className="text-xs mb-1">Pay to the Order of: {payee}</div>
-                <div className="text-xs">{memo}</div>
+                <div className="text-xs mb-1">Pay to the Order of: {sanitizedPayee}</div>
+                <div className="text-xs">{sanitizedMemo}</div>
                 <div className="absolute right-0 top-0">
                   <div className="text-xs">Amount: {formattedAmount}</div>
                 </div>
