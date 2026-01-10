@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { numberToWords, formatCurrency } from "@/utils/numberToWords";
+import { numberToWords } from "@/utils/numberToWords";
 import { sanitizeText, validateAmount, validateDate, validatePayee, VALIDATION_RULES } from "@/utils/validation";
 
 interface CheckFormValues {
