@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import CheckForm from '@/components/CheckForm';
 import CheckPreview from '@/components/CheckPreview';
@@ -24,32 +24,19 @@ const Index = () => {
   });
 
   const [showPreview, setShowPreview] = useState<boolean>(false);
-  const [shouldPrint, setShouldPrint] = useState(false);
+  const [isPrinting, setIsPrinting] = useState<boolean>(false);
 
   const checkPrintRef = useRef<HTMLDivElement>(null);
-
-  // Helper function to update check data with partial updates
-  const updateCheckData = (updates: Partial<CheckData>) => {
-    setCheckData(prev => ({ ...prev, ...updates }));
-  };
 
   // Generate the amount in words
   const amountInWords = checkData.amount && !isNaN(parseFloat(checkData.amount))
     ? numberToWords(parseFloat(checkData.amount))
     : '';
 
-  // useEffect to handle printing after state updates
-  useEffect(() => {
-    if (shouldPrint && showPreview) {
-      // State has been updated, trigger print
-      handlePrint();
-      setShouldPrint(false);
-    }
-  }, [shouldPrint, showPreview]);
-
   const handlePrint = useReactToPrint({
     documentTitle: 'Check Print',
     onBeforePrint: () => {
+      setIsPrinting(true);
       // Validate date
       const dateValidation = validateDate(checkData.date);
       if (!dateValidation.isValid) {
@@ -58,6 +45,7 @@ const Index = () => {
           description: dateValidation.error || "Please enter a valid date.",
           variant: "destructive"
         });
+        setIsPrinting(false);
         return Promise.reject('Invalid date');
       }
 
@@ -69,6 +57,7 @@ const Index = () => {
           description: payeeValidation.error || "Please enter a valid payee name.",
           variant: "destructive"
         });
+        setIsPrinting(false);
         return Promise.reject('Invalid payee');
       }
 
@@ -80,12 +69,14 @@ const Index = () => {
           description: amountValidation.error || "Please enter a valid amount.",
           variant: "destructive"
         });
+        setIsPrinting(false);
         return Promise.reject('Invalid amount');
       }
 
       return Promise.resolve();
     },
     onAfterPrint: () => {
+      setIsPrinting(false);
       toast({
         title: "Check Printed",
         description: "The check was sent to your printer successfully.",
@@ -101,11 +92,16 @@ const Index = () => {
     // Update state with form data using single setState call
     setCheckData(formData);
 
-    // Show preview
+    // Show preview (no longer auto-prints)
     setShowPreview(true);
+  };
 
-    // Trigger print on next render (via useEffect)
-    setShouldPrint(true);
+  const handlePrintClick = () => {
+    handlePrint();
+  };
+
+  const handleEditClick = () => {
+    setShowPreview(false);
   };
 
   return (
@@ -117,27 +113,49 @@ const Index = () => {
         </header>
 
         <div className="grid grid-cols-1 gap-8">
-          {/* Form to collect check information */}
-          <CheckForm
-            onPrint={handleFormSubmit}
-            initialValues={checkData}
-          />
-
-          {/* Hidden element for printing */}
-          <div className={showPreview ? 'block' : 'hidden'}>
-            <CheckPreview
-              ref={checkPrintRef}
-              date={checkData.date}
-              payee={checkData.payee}
-              address={checkData.address}
-              city={checkData.city}
-              state={checkData.state}
-              zipCode={checkData.zipCode}
-              amount={checkData.amount}
-              amountInWords={amountInWords}
-              memo={checkData.memo}
+          {/* Form to collect check information - hide when preview is shown */}
+          {!showPreview && (
+            <CheckForm
+              onPrint={handleFormSubmit}
+              initialValues={checkData}
             />
-          </div>
+          )}
+
+          {/* Preview with Print/Edit buttons */}
+          {showPreview && (
+            <div>
+              <CheckPreview
+                ref={checkPrintRef}
+                date={checkData.date}
+                payee={checkData.payee}
+                address={checkData.address}
+                city={checkData.city}
+                state={checkData.state}
+                zipCode={checkData.zipCode}
+                amount={checkData.amount}
+                amountInWords={amountInWords}
+                memo={checkData.memo}
+              />
+
+              {/* Action buttons for preview */}
+              <div className="flex justify-center gap-4 mt-6">
+                <button
+                  onClick={handleEditClick}
+                  disabled={isPrinting}
+                  className="px-6 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                >
+                  Edit Check
+                </button>
+                <button
+                  onClick={handlePrintClick}
+                  disabled={isPrinting}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                >
+                  {isPrinting ? 'Printing...' : 'Print Check'}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <footer className="mt-12 text-center text-gray-500 text-sm">

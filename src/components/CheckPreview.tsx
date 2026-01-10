@@ -28,10 +28,13 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
     // Format date to MM/DD/YYYY
     const formattedDate = formatCheckDate(date);
 
-    // Format amount with dollar sign and 2 decimal places
-    const formattedAmount = amount
-      ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(parseFloat(amount))
-      : '';
+    // Format amount with dollar sign and 2 decimal places, handling NaN gracefully
+    const formattedAmount = (() => {
+      if (!amount) return '';
+      const parsedAmount = parseFloat(amount);
+      if (isNaN(parsedAmount)) return '$0.00';
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(parsedAmount);
+    })();
 
     // Full address formatted using sanitized values
     const fullAddress = sanitizedAddress ? `${sanitizedAddress}` : '';
@@ -47,16 +50,16 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
     const padWithAsterisks = (text: string): string => {
       const maxLength = 80; // Approximate max characters in the amount line
       if (!text) return '';
-      
+
       const padLength = maxLength - text.length;
       if (padLength <= 0) return text;
-      
+
       const padding = '*'.repeat(padLength);
       return `${text} ${padding}`;
     };
 
-    // Padded amount in words
-    const paddedAmountInWords = padWithAsterisks(amountInWords);
+    // Padded amount in words - handle undefined/null gracefully
+    const paddedAmountInWords = amountInWords ? padWithAsterisks(amountInWords) : '';
 
     return (
       <div ref={ref} className="check-preview">

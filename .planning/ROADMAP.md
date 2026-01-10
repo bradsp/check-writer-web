@@ -61,10 +61,11 @@ This roadmap addresses all 41 issues discovered in the comprehensive codebase au
 - **Completed**: 2026-01-10
 
 ### 02-02: Print UX & NaN Handling
-- **Status**: pending
+- **Status**: completed
 - **Fixes**: 2.2 (Print preview UX), 2.3 (NaN handling)
 - **Effort**: Medium
 - **Deliverables**: Improved print workflow, proper NaN guards
+- **Completed**: 2026-01-10
 
 ### 02-03: Code Quality - Extract Utilities
 - **Status**: pending
@@ -136,11 +137,11 @@ This roadmap addresses all 41 issues discovered in the comprehensive codebase au
 ## Progress Tracking
 
 **Phase 1**: 4/4 plans complete (100%)
-**Phase 2**: 1/5 plans complete (20%)
+**Phase 2**: 2/5 plans complete (40%)
 **Phase 3**: 0/2 plans complete (0%)
 **Phase 4**: 0/2 plans complete (0%)
 
-**Overall**: 5/13 plans complete (38.5%)
+**Overall**: 6/13 plans complete (46.2%)
 
 ---
 
@@ -148,5 +149,5 @@ This roadmap addresses all 41 issues discovered in the comprehensive codebase au
 
 **Phase 2 in progress!**
 
-**Next Plan**: Phase 2, Plan 02-02 (Print UX & NaN Handling)
-**Command**: `/run-plan .planning/phases/02-high-priority/02-02-PLAN.md`
+**Next Plan**: Phase 2, Plan 02-03 (Code Quality - Extract Utilities)
+**Command**: `/run-plan .planning/phases/02-high-priority/02-03-PLAN.md`
