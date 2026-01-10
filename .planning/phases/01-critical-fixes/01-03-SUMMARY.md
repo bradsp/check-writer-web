@@ -147,9 +147,9 @@
 
 ## Commits
 
-Commit hash: (to be added after commit)
+**Commit**: `52d088147eee23af3a1f82c5d6da37e276a6d7de`
 
-Commit message format:
+**Message**:
 ```
 feat(01-03): fix print workflow race condition and date handling
 
@@ -160,7 +160,8 @@ feat(01-03): fix print workflow race condition and date handling
 - Eliminate race conditions in print workflow
 - Fix UTC timezone bugs in date handling
 
-Generated with Claude Code
+🤖 Generated with Claude Code
+
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
 

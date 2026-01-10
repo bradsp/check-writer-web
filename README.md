@@ -89,3 +89,39 @@ Yes it is!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Production Security Headers
+
+For enhanced security when deploying to production, add these HTTP headers to your web server configuration:
+
+### Nginx Configuration
+
+Add these headers to your Nginx server block:
+
+```nginx
+add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.gpteng.co; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none';" always;
+add_header X-Frame-Options "DENY" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+```
+
+### Apache Configuration
+
+Add these headers to your `.htaccess` file or Apache configuration:
+
+```apache
+Header set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.gpteng.co; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"
+Header set X-Frame-Options "DENY"
+Header set X-Content-Type-Options "nosniff"
+Header set Referrer-Policy "strict-origin-when-cross-origin"
+Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+```
+
+### Security Headers Explained
+
+- **Content-Security-Policy**: Prevents XSS attacks by restricting which resources can be loaded
+- **X-Frame-Options**: Prevents clickjacking by blocking iframe embedding
+- **X-Content-Type-Options**: Prevents MIME-sniffing attacks
+- **Referrer-Policy**: Controls how much referrer information is sent with requests
+- **Permissions-Policy**: Restricts access to browser features like geolocation, microphone, and camera

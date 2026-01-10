@@ -1,7 +1,24 @@
 {
   "permissions": {
     "allow": [
-      "Skill(taches-cc-resources:run-prompt)"
+      "Skill(taches-cc-resources:run-prompt)",
+      "Bash(if not exist analysis mkdir analysis)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Skill(taches-cc-resources:create-plan)",
+      "Skill(taches-cc-resources:create-plans)",
+      "Bash(git rev-parse:*)",
+      "Bash(cat:*)",
+      "Bash(tree:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout /t 5)",
+      "Bash(ping:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run test:run:*)",
+      "Bash(findstr:*)"
     ]
   }
 }
