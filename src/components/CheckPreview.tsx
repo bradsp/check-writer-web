@@ -1,6 +1,7 @@
 
 import React, { forwardRef } from 'react';
 import { sanitizeText } from '@/utils/validation';
+import { formatCheckDate } from '@/utils/dateHelpers';
 
 interface CheckPreviewProps {
   date: string;
@@ -25,7 +26,7 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
     const sanitizedMemo = sanitizeText(memo);
 
     // Format date to MM/DD/YYYY
-    const formattedDate = date ? new Date(date).toLocaleDateString('en-US') : '';
+    const formattedDate = formatCheckDate(date);
 
     // Format amount with dollar sign and 2 decimal places
     const formattedAmount = amount
@@ -77,7 +78,11 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
           <div className="absolute left-0 right-0 top-[3.5in] h-[3.5in]">
             {/* Date field - moved to the left by 1 inch and down .25 inch from previous position */}
             <div className="absolute right-[2.5in] top-[1.25in] text-sm">
-              {formattedDate}
+              {formattedDate === 'Invalid Date' ? (
+                <span className="text-red-500">Invalid Date</span>
+              ) : (
+                formattedDate
+              )}
             </div>
             
             {/* Amount in numbers field - moved left .5 inch and down .25 inch from previous position */}

@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import CheckForm from '@/components/CheckForm';
 import CheckPreview from '@/components/CheckPreview';
 import { useToast } from "@/components/ui/use-toast";
 import { numberToWords } from '@/utils/numberToWords';
 import { validateDate, validatePayee, validateAmount } from '@/utils/validation';
+import { getTodayLocalISO } from '@/utils/dateHelpers';
 
 interface CheckFormData {
   date: string;
@@ -19,7 +20,7 @@ interface CheckFormData {
 
 const Index = () => {
   const { toast } = useToast();
-  const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState<string>(getTodayLocalISO());
   const [payee, setPayee] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [city, setCity] = useState<string>('');
@@ -28,13 +29,23 @@ const Index = () => {
   const [amount, setAmount] = useState<string>('');
   const [memo, setMemo] = useState<string>('');
   const [showPreview, setShowPreview] = useState<boolean>(false);
-  
+  const [shouldPrint, setShouldPrint] = useState(false);
+
   const checkPrintRef = useRef<HTMLDivElement>(null);
 
   // Generate the amount in words
-  const amountInWords = amount && !isNaN(parseFloat(amount)) 
-    ? numberToWords(parseFloat(amount)) 
+  const amountInWords = amount && !isNaN(parseFloat(amount))
+    ? numberToWords(parseFloat(amount))
     : '';
+
+  // useEffect to handle printing after state updates
+  useEffect(() => {
+    if (shouldPrint && showPreview) {
+      // State has been updated, trigger print
+      handlePrint();
+      setShouldPrint(false);
+    }
+  }, [shouldPrint, showPreview]);
 
   const handlePrint = useReactToPrint({
     documentTitle: 'Check Print',
@@ -96,14 +107,12 @@ const Index = () => {
     setZipCode(formData.zipCode);
     setAmount(formData.amount);
     setMemo(formData.memo);
-    
-    // Show preview first
+
+    // Show preview
     setShowPreview(true);
-    
-    // Then trigger print after a delay to ensure state is updated
-    setTimeout(() => {
-      handlePrint();
-    }, 500);
+
+    // Trigger print on next render (via useEffect)
+    setShouldPrint(true);
   };
 
   return (

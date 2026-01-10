@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { numberToWords } from "@/utils/numberToWords";
 import { sanitizeText, validateAmount, validateDate, validatePayee, VALIDATION_RULES } from "@/utils/validation";
+import { getTodayLocalISO } from '@/utils/dateHelpers';
 
 interface CheckFormValues {
   date: string;
@@ -26,7 +27,7 @@ interface CheckFormProps {
 
 const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) => {
   const { toast } = useToast();
-  const [date, setDate] = useState<string>(initialValues.date || new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState<string>(initialValues.date || getTodayLocalISO());
   const [payee, setPayee] = useState<string>(initialValues.payee || '');
   const [address, setAddress] = useState<string>(initialValues.address || '');
   const [city, setCity] = useState<string>(initialValues.city || '');
@@ -130,7 +131,7 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
   };
 
   const handleClear = () => {
-    setDate(new Date().toISOString().split('T')[0]);
+    setDate(getTodayLocalISO());
     setPayee('');
     setAddress('');
     setCity('');
