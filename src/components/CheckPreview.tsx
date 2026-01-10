@@ -2,6 +2,7 @@
 import React, { forwardRef } from 'react';
 import { sanitizeText } from '@/utils/validation';
 import { formatCheckDate } from '@/utils/dateHelpers';
+import { padWithAsterisks } from '@/utils/checkFormatting';
 
 interface CheckPreviewProps {
   date: string;
@@ -45,18 +46,6 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
       (sanitizedZipCode && (sanitizedCity || sanitizedState)) ? ' ' : '',
       sanitizedZipCode
     ].join('');
-
-    // Pad the amount in words with asterisks for security
-    const padWithAsterisks = (text: string): string => {
-      const maxLength = 80; // Approximate max characters in the amount line
-      if (!text) return '';
-
-      const padLength = maxLength - text.length;
-      if (padLength <= 0) return text;
-
-      const padding = '*'.repeat(padLength);
-      return `${text} ${padding}`;
-    };
 
     // Padded amount in words - handle undefined/null gracefully
     const paddedAmountInWords = amountInWords ? padWithAsterisks(amountInWords) : '';

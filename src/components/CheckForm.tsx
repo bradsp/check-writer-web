@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { numberToWords } from "@/utils/numberToWords";
 import { sanitizeText, validateAmount, validateDate, validatePayee, VALIDATION_RULES } from "@/utils/validation";
 import { getTodayLocalISO } from '@/utils/dateHelpers';
+import { padWithAsterisks } from '@/utils/checkFormatting';
 import { CheckData } from '@/types/check';
 
 interface CheckFormProps {
@@ -30,18 +31,6 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
   const [amountInWords, setAmountInWords] = useState<string>('');
   const [paddedAmountInWords, setPaddedAmountInWords] = useState<string>('');
   const amountInputRef = useRef<HTMLInputElement>(null);
-
-  // Function to pad the amount in words with asterisks
-  const padWithAsterisks = (text: string): string => {
-    const maxLength = 80; // Approximate max characters in the amount line
-    if (!text) return '';
-    
-    const padLength = maxLength - text.length;
-    if (padLength <= 0) return text;
-    
-    const padding = '*'.repeat(padLength);
-    return `${text} ${padding}`;
-  };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
