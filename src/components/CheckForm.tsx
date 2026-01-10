@@ -8,25 +8,17 @@ import { useToast } from "@/components/ui/use-toast";
 import { numberToWords } from "@/utils/numberToWords";
 import { sanitizeText, validateAmount, validateDate, validatePayee, VALIDATION_RULES } from "@/utils/validation";
 import { getTodayLocalISO } from '@/utils/dateHelpers';
-
-interface CheckFormValues {
-  date: string;
-  payee: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  zipCode?: string;
-  amount: string;
-  memo: string;
-}
+import { CheckData } from '@/types/check';
 
 interface CheckFormProps {
-  onPrint: (values: CheckFormValues) => void;
-  initialValues?: CheckFormValues;
+  onPrint: (values: CheckData) => void;
+  initialValues?: Partial<CheckData>;
 }
 
 const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) => {
   const { toast } = useToast();
+
+  // Use local state for the form (allows real-time input without affecting parent state)
   const [date, setDate] = useState<string>(initialValues.date || getTodayLocalISO());
   const [payee, setPayee] = useState<string>(initialValues.payee || '');
   const [address, setAddress] = useState<string>(initialValues.address || '');

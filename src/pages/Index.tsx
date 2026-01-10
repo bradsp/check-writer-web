@@ -6,36 +6,36 @@ import { useToast } from "@/components/ui/use-toast";
 import { numberToWords } from '@/utils/numberToWords';
 import { validateDate, validatePayee, validateAmount } from '@/utils/validation';
 import { getTodayLocalISO } from '@/utils/dateHelpers';
-
-interface CheckFormData {
-  date: string;
-  payee: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  amount: string;
-  memo: string;
-}
+import { CheckData } from '@/types/check';
 
 const Index = () => {
   const { toast } = useToast();
-  const [date, setDate] = useState<string>(getTodayLocalISO());
-  const [payee, setPayee] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
-  const [city, setCity] = useState<string>('');
-  const [state, setState] = useState<string>('');
-  const [zipCode, setZipCode] = useState<string>('');
-  const [amount, setAmount] = useState<string>('');
-  const [memo, setMemo] = useState<string>('');
+
+  // Consolidated state management - single state object instead of 8 individual hooks
+  const [checkData, setCheckData] = useState<CheckData>({
+    date: getTodayLocalISO(),
+    payee: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    amount: '',
+    memo: '',
+  });
+
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [shouldPrint, setShouldPrint] = useState(false);
 
   const checkPrintRef = useRef<HTMLDivElement>(null);
 
+  // Helper function to update check data with partial updates
+  const updateCheckData = (updates: Partial<CheckData>) => {
+    setCheckData(prev => ({ ...prev, ...updates }));
+  };
+
   // Generate the amount in words
-  const amountInWords = amount && !isNaN(parseFloat(amount))
-    ? numberToWords(parseFloat(amount))
+  const amountInWords = checkData.amount && !isNaN(parseFloat(checkData.amount))
+    ? numberToWords(parseFloat(checkData.amount))
     : '';
 
   // useEffect to handle printing after state updates
@@ -51,7 +51,7 @@ const Index = () => {
     documentTitle: 'Check Print',
     onBeforePrint: () => {
       // Validate date
-      const dateValidation = validateDate(date);
+      const dateValidation = validateDate(checkData.date);
       if (!dateValidation.isValid) {
         toast({
           title: "Invalid Date",
@@ -62,7 +62,7 @@ const Index = () => {
       }
 
       // Validate payee
-      const payeeValidation = validatePayee(payee);
+      const payeeValidation = validatePayee(checkData.payee);
       if (!payeeValidation.isValid) {
         toast({
           title: "Invalid Payee",
@@ -73,7 +73,7 @@ const Index = () => {
       }
 
       // Validate amount
-      const amountValidation = validateAmount(amount);
+      const amountValidation = validateAmount(checkData.amount);
       if (!amountValidation.isValid) {
         toast({
           title: "Invalid Amount",
@@ -97,16 +97,9 @@ const Index = () => {
     pageStyle: "@page { size: 8.5in 11in; margin: 0mm; } @page { page-break-after: avoid; }",
   });
 
-  const handleFormSubmit = (formData: CheckFormData) => {
-    // Update state with form data
-    setDate(formData.date);
-    setPayee(formData.payee);
-    setAddress(formData.address);
-    setCity(formData.city);
-    setState(formData.state);
-    setZipCode(formData.zipCode);
-    setAmount(formData.amount);
-    setMemo(formData.memo);
+  const handleFormSubmit = (formData: CheckData) => {
+    // Update state with form data using single setState call
+    setCheckData(formData);
 
     // Show preview
     setShowPreview(true);
@@ -125,33 +118,24 @@ const Index = () => {
 
         <div className="grid grid-cols-1 gap-8">
           {/* Form to collect check information */}
-          <CheckForm 
+          <CheckForm
             onPrint={handleFormSubmit}
-            initialValues={{ 
-              date, 
-              payee, 
-              address, 
-              city, 
-              state, 
-              zipCode, 
-              amount, 
-              memo 
-            }}
+            initialValues={checkData}
           />
-          
+
           {/* Hidden element for printing */}
           <div className={showPreview ? 'block' : 'hidden'}>
             <CheckPreview
               ref={checkPrintRef}
-              date={date}
-              payee={payee}
-              address={address}
-              city={city}
-              state={state}
-              zipCode={zipCode}
-              amount={amount}
+              date={checkData.date}
+              payee={checkData.payee}
+              address={checkData.address}
+              city={checkData.city}
+              state={checkData.state}
+              zipCode={checkData.zipCode}
+              amount={checkData.amount}
               amountInWords={amountInWords}
-              memo={memo}
+              memo={checkData.memo}
             />
           </div>
         </div>
