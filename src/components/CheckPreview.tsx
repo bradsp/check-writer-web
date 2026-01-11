@@ -1,5 +1,5 @@
 
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useMemo } from 'react';
 import { sanitizeText } from '@/utils/validation';
 import { formatCheckDate } from '@/utils/dateHelpers';
 import { padWithAsterisks } from '@/utils/checkFormatting';
@@ -18,37 +18,40 @@ interface CheckPreviewProps {
 
 const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
   ({ date, payee, address, city, state, zipCode, amount, amountInWords, memo }, ref) => {
-    // Sanitize all text inputs (defense in depth)
-    const sanitizedPayee = sanitizeText(payee);
-    const sanitizedAddress = sanitizeText(address);
-    const sanitizedCity = sanitizeText(city);
-    const sanitizedState = sanitizeText(state);
-    const sanitizedZipCode = sanitizeText(zipCode);
-    const sanitizedMemo = sanitizeText(memo);
+    // Memoize sanitized text values to avoid re-sanitizing on every render
+    const sanitizedPayee = useMemo(() => sanitizeText(payee), [payee]);
+    const sanitizedAddress = useMemo(() => sanitizeText(address), [address]);
+    const sanitizedCity = useMemo(() => sanitizeText(city), [city]);
+    const sanitizedState = useMemo(() => sanitizeText(state), [state]);
+    const sanitizedZipCode = useMemo(() => sanitizeText(zipCode), [zipCode]);
+    const sanitizedMemo = useMemo(() => sanitizeText(memo), [memo]);
 
-    // Format date to MM/DD/YYYY
-    const formattedDate = formatCheckDate(date);
+    // Memoize formatted date calculation
+    const formattedDate = useMemo(() => formatCheckDate(date), [date]);
 
-    // Format amount with dollar sign and 2 decimal places, handling NaN gracefully
-    const formattedAmount = (() => {
+    // Memoize formatted amount calculation
+    const formattedAmount = useMemo(() => {
       if (!amount) return '';
       const parsedAmount = parseFloat(amount);
       if (isNaN(parsedAmount)) return '$0.00';
       return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(parsedAmount);
-    })();
+    }, [amount]);
 
-    // Full address formatted using sanitized values
-    const fullAddress = sanitizedAddress ? `${sanitizedAddress}` : '';
-    const cityStateZip = [
+    // Memoize address formatting
+    const fullAddress = useMemo(() => sanitizedAddress ? `${sanitizedAddress}` : '', [sanitizedAddress]);
+    const cityStateZip = useMemo(() => [
       sanitizedCity,
       (sanitizedCity && sanitizedState) ? ', ' : '',
       sanitizedState,
       (sanitizedZipCode && (sanitizedCity || sanitizedState)) ? ' ' : '',
       sanitizedZipCode
-    ].join('');
+    ].join(''), [sanitizedCity, sanitizedState, sanitizedZipCode]);
 
-    // Padded amount in words - handle undefined/null gracefully
-    const paddedAmountInWords = amountInWords ? padWithAsterisks(amountInWords) : '';
+    // Memoize padded amount in words
+    const paddedAmountInWords = useMemo(
+      () => amountInWords ? padWithAsterisks(amountInWords) : '',
+      [amountInWords]
+    );
 
     return (
       <div ref={ref} className="check-preview">
@@ -193,4 +196,5 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
 
 CheckPreview.displayName = 'CheckPreview';
 
-export default CheckPreview;
+// Wrap component with React.memo to prevent unnecessary re-renders
+export default React.memo(CheckPreview);

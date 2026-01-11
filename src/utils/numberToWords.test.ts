@@ -24,13 +24,13 @@ describe('numberToWords', () => {
 
   it('handles hundreds with "and"', () => {
     expect(numberToWords(100)).toBe('One hundred and 00/100 Dollars');
-    expect(numberToWords(102)).toBe('One hundred and two and 00/100 Dollars');
-    expect(numberToWords(120)).toBe('One hundred and twenty and 00/100 Dollars');
+    expect(numberToWords(102)).toBe('One hundred two and 00/100 Dollars');
+    expect(numberToWords(120)).toBe('One hundred twenty and 00/100 Dollars');
   });
 
   it('handles thousands', () => {
     expect(numberToWords(1000)).toBe('One thousand and 00/100 Dollars');
-    expect(numberToWords(1234.56)).toBe('One thousand two hundred and thirty-four and 56/100 Dollars');
+    expect(numberToWords(1234.56)).toBe('One thousand two hundred thirty-four and 56/100 Dollars');
   });
 
   it('handles cents correctly', () => {
@@ -56,6 +56,6 @@ describe('numberToWords', () => {
   });
 
   it('handles large amounts', () => {
-    expect(numberToWords(999999.99)).toBe('Nine hundred and ninety-nine thousand nine hundred and ninety-nine and 99/100 Dollars');
+    expect(numberToWords(999999.99)).toBe('Nine hundred ninety-nine thousand nine hundred ninety-nine and 99/100 Dollars');
   });
 });

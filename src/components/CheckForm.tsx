@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -43,7 +43,7 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
   // Confirmation dialog for large amounts
   const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAmountChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Only allow numbers and a single decimal point during typing
     if (/^$|^[0-9]+(\.[0-9]*)?$/.test(value)) {
@@ -65,9 +65,9 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
         setPaddedAmountInWords('');
       }
     }
-  };
+  }, []);
 
-  const validateForm = (): boolean => {
+  const validateForm = useCallback((): boolean => {
     // Clear all errors first
     setDateError('');
     setPayeeError('');
@@ -109,21 +109,9 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
     }
 
     return !hasErrors;
-  };
+  }, [date, payee, amount, toast]);
 
-  const handlePrintClick = () => {
-    if (validateForm()) {
-      // Check if amount is over the large amount threshold
-      const numericAmount = parseFloat(amount);
-      if (numericAmount > LARGE_AMOUNT_THRESHOLD) {
-        setShowConfirmDialog(true);
-      } else {
-        proceedWithPrint();
-      }
-    }
-  };
-
-  const proceedWithPrint = () => {
+  const proceedWithPrint = useCallback(() => {
     onPrint({
       date,
       payee,
@@ -135,9 +123,21 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
       memo
     });
     setShowConfirmDialog(false);
-  };
+  }, [onPrint, date, payee, address, city, state, zipCode, amount, memo]);
 
-  const handleClear = () => {
+  const handlePrintClick = useCallback(() => {
+    if (validateForm()) {
+      // Check if amount is over the large amount threshold
+      const numericAmount = parseFloat(amount);
+      if (numericAmount > LARGE_AMOUNT_THRESHOLD) {
+        setShowConfirmDialog(true);
+      } else {
+        proceedWithPrint();
+      }
+    }
+  }, [validateForm, amount, proceedWithPrint]);
+
+  const handleClear = useCallback(() => {
     setDate(getTodayLocalISO());
     setPayee('');
     setAddress('');
@@ -152,7 +152,7 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
     setDateError('');
     setPayeeError('');
     setAmountError('');
-  };
+  }, []);
 
   // Keyboard navigation: Ctrl+P for print, Esc to clear
   useEffect(() => {
@@ -402,4 +402,5 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
   );
 };
 
-export default CheckForm;
+// Wrap component with React.memo to prevent unnecessary re-renders
+export default React.memo(CheckForm);
