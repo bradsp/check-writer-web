@@ -11,6 +11,7 @@ import { sanitizeText, validateAmount, validateDate, validatePayee, VALIDATION_R
 import { getTodayLocalISO } from '@/utils/dateHelpers';
 import { padWithAsterisks } from '@/utils/checkFormatting';
 import { CheckData } from '@/types/check';
+import { LARGE_AMOUNT_THRESHOLD } from '@/constants/checkConstants';
 
 interface CheckFormProps {
   onPrint: (values: CheckData) => void | Promise<void>;
@@ -41,7 +42,6 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
 
   // Confirmation dialog for large amounts
   const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
-  const LARGE_AMOUNT_THRESHOLD = 10000;
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -172,7 +172,8 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isLoading, date, payee, address, city, state, zipCode, amount, memo]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
 
   return (
     <Card className="w-full max-w-2xl mx-auto" role="form" aria-label="Check information form">
