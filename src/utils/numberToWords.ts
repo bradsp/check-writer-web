@@ -34,8 +34,9 @@ export function numberToWords(num: number): string {
     }
 
     const remainder = num % 100;
+    // Use American check-writing style: no "and" between hundreds and tens/ones
     return ones[Math.floor(num / 100)] + ' hundred' +
-           (remainder !== 0 ? ' and ' + convertLessThanOneThousand(remainder) : '');
+           (remainder !== 0 ? ' ' + convertLessThanOneThousand(remainder) : '');
   };
 
   if (num === 0) return 'Zero and 00/100 Dollars';

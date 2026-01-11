@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { numberToWords } from "@/utils/numberToWords";
 import { sanitizeText, validateAmount, validateDate, validatePayee, VALIDATION_RULES } from "@/utils/validation";
@@ -37,6 +38,10 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
   const [dateError, setDateError] = useState<string>('');
   const [payeeError, setPayeeError] = useState<string>('');
   const [amountError, setAmountError] = useState<string>('');
+
+  // Confirmation dialog for large amounts
+  const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
+  const LARGE_AMOUNT_THRESHOLD = 10000;
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -108,17 +113,28 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
 
   const handlePrintClick = () => {
     if (validateForm()) {
-      onPrint({
-        date,
-        payee,
-        address,
-        city,
-        state,
-        zipCode,
-        amount,
-        memo
-      });
+      // Check if amount is over the large amount threshold
+      const numericAmount = parseFloat(amount);
+      if (numericAmount > LARGE_AMOUNT_THRESHOLD) {
+        setShowConfirmDialog(true);
+      } else {
+        proceedWithPrint();
+      }
     }
+  };
+
+  const proceedWithPrint = () => {
+    onPrint({
+      date,
+      payee,
+      address,
+      city,
+      state,
+      zipCode,
+      amount,
+      memo
+    });
+    setShowConfirmDialog(false);
   };
 
   const handleClear = () => {
@@ -205,7 +221,12 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="payee">Pay to the Order of</Label>
+          <div className="flex justify-between items-center">
+            <Label htmlFor="payee">Pay to the Order of</Label>
+            <span className="text-xs text-gray-500">
+              {payee.length}/{VALIDATION_RULES.PAYEE_MAX_LENGTH}
+            </span>
+          </div>
           <Input
             id="payee"
             type="text"
@@ -226,7 +247,12 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
         
         {/* Address Fields */}
         <div className="space-y-2">
-          <Label htmlFor="address">Address</Label>
+          <div className="flex justify-between items-center">
+            <Label htmlFor="address">Address</Label>
+            <span className="text-xs text-gray-500">
+              {address.length}/{VALIDATION_RULES.ADDRESS_MAX_LENGTH}
+            </span>
+          </div>
           <Input
             id="address"
             type="text"
@@ -241,7 +267,12 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="city">City</Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="city">City</Label>
+              <span className="text-xs text-gray-500">
+                {city.length}/{VALIDATION_RULES.CITY_MAX_LENGTH}
+              </span>
+            </div>
             <Input
               id="city"
               type="text"
@@ -254,7 +285,12 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="state">State</Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="state">State</Label>
+              <span className="text-xs text-gray-500">
+                {state.length}/{VALIDATION_RULES.STATE_MAX_LENGTH}
+              </span>
+            </div>
             <Input
               id="state"
               type="text"
@@ -267,7 +303,12 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="zipCode">Zip Code</Label>
+            <div className="flex justify-between items-center">
+              <Label htmlFor="zipCode">Zip Code</Label>
+              <span className="text-xs text-gray-500">
+                {zipCode.length}/{VALIDATION_RULES.ZIP_MAX_LENGTH}
+              </span>
+            </div>
             <Input
               id="zipCode"
               type="text"
@@ -299,7 +340,12 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="memo">Memo (Optional)</Label>
+          <div className="flex justify-between items-center">
+            <Label htmlFor="memo">Memo (Optional)</Label>
+            <span className="text-xs text-gray-500">
+              {memo.length}/{VALIDATION_RULES.MEMO_MAX_LENGTH}
+            </span>
+          </div>
           <Input
             id="memo"
             type="text"
@@ -330,6 +376,27 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
           {isLoading ? 'Preparing...' : 'Print Check'}
         </Button>
       </CardFooter>
+
+      {/* Confirmation dialog for large amounts */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Large Amount</DialogTitle>
+            <DialogDescription>
+              You are about to print a check for ${parseFloat(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}, which exceeds ${LARGE_AMOUNT_THRESHOLD.toLocaleString('en-US')}.
+              Please verify this amount is correct before proceeding.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={proceedWithPrint} className="bg-blue-600 hover:bg-blue-700">
+              Confirm and Print
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
