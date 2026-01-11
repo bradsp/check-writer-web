@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import CheckForm from '@/components/CheckForm';
 import CheckPreview from '@/components/CheckPreview';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useToast } from "@/components/ui/use-toast";
 import { numberToWords } from '@/utils/numberToWords';
 import { validateDate, validatePayee, validateAmount } from '@/utils/validation';
@@ -108,11 +109,17 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4">
       <div className="container mx-auto max-w-5xl">
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-blue-600">Check Writer</h1>
-          <p className="text-gray-600 mt-2">Print information on pre-printed check forms</p>
+        <header className="mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex-1"></div>
+            <ThemeToggle />
+          </div>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-blue-600">Check Writer</h1>
+            <p className="text-muted-foreground mt-2">Print information on pre-printed check forms</p>
+          </div>
         </header>
 
         <main role="main" aria-label="Check writing application">
@@ -166,7 +173,7 @@ const Index = () => {
           </section>
         </main>
 
-        <footer className="mt-12 text-center text-gray-500 text-sm">
+        <footer className="mt-12 text-center text-muted-foreground text-sm">
           <p>Position your pre-printed check form in the printer before printing</p>
           <p className="mt-1">© 2025 Check Writer App</p>
         </footer>
