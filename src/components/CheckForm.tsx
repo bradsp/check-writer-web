@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -138,8 +138,28 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
     setAmountError('');
   };
 
+  // Keyboard navigation: Ctrl+P for print, Esc to clear
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+P for print
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        e.preventDefault();
+        if (!isLoading) {
+          handlePrintClick();
+        }
+      }
+      // Esc to clear
+      if (e.key === 'Escape') {
+        handleClear();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isLoading, date, payee, address, city, state, zipCode, amount, memo]);
+
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-2xl mx-auto" role="form" aria-label="Check information form">
       <CardHeader className="bg-blue-600 text-white rounded-t-lg">
         <CardTitle className="text-xl font-bold">Check Writer</CardTitle>
         <CardDescription className="text-gray-100">Enter check details below</CardDescription>
@@ -154,9 +174,13 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
               value={date}
               onChange={(e) => setDate(e.target.value)}
               className={dateError ? 'border-red-500 focus:ring-red-500' : ''}
+              aria-label="Check date"
+              aria-required="true"
+              aria-invalid={!!dateError}
+              aria-describedby={dateError ? 'date-error' : undefined}
             />
             {dateError && (
-              <p className="text-sm text-red-600 mt-1">{dateError}</p>
+              <p id="date-error" className="text-sm text-red-600 mt-1" role="alert">{dateError}</p>
             )}
           </div>
           <div className="space-y-2">
@@ -169,9 +193,13 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
               onChange={handleAmountChange}
               ref={amountInputRef}
               className={amountError ? 'border-red-500 focus:ring-red-500 font-medium' : 'font-medium'}
+              aria-label="Check amount in dollars"
+              aria-required="true"
+              aria-invalid={!!amountError}
+              aria-describedby={amountError ? 'amount-error' : undefined}
             />
             {amountError && (
-              <p className="text-sm text-red-600 mt-1">{amountError}</p>
+              <p id="amount-error" className="text-sm text-red-600 mt-1" role="alert">{amountError}</p>
             )}
           </div>
         </div>
@@ -186,9 +214,13 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
             onChange={(e) => setPayee(sanitizeText(e.target.value))}
             maxLength={VALIDATION_RULES.PAYEE_MAX_LENGTH}
             className={payeeError ? 'border-red-500 focus:ring-red-500' : ''}
+            aria-label="Payee name"
+            aria-required="true"
+            aria-invalid={!!payeeError}
+            aria-describedby={payeeError ? 'payee-error' : undefined}
           />
           {payeeError && (
-            <p className="text-sm text-red-600 mt-1">{payeeError}</p>
+            <p id="payee-error" className="text-sm text-red-600 mt-1" role="alert">{payeeError}</p>
           )}
         </div>
         
@@ -202,9 +234,11 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
             value={address}
             onChange={(e) => setAddress(sanitizeText(e.target.value))}
             maxLength={VALIDATION_RULES.ADDRESS_MAX_LENGTH}
+            aria-label="Street address"
+            aria-required="false"
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="city">City</Label>
@@ -215,6 +249,8 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
               value={city}
               onChange={(e) => setCity(sanitizeText(e.target.value))}
               maxLength={VALIDATION_RULES.CITY_MAX_LENGTH}
+              aria-label="City"
+              aria-required="false"
             />
           </div>
           <div className="space-y-2">
@@ -226,6 +262,8 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
               value={state}
               onChange={(e) => setState(sanitizeText(e.target.value))}
               maxLength={VALIDATION_RULES.STATE_MAX_LENGTH}
+              aria-label="State"
+              aria-required="false"
             />
           </div>
           <div className="space-y-2">
@@ -237,13 +275,21 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
               value={zipCode}
               onChange={(e) => setZipCode(sanitizeText(e.target.value))}
               maxLength={VALIDATION_RULES.ZIP_MAX_LENGTH}
+              aria-label="Zip code"
+              aria-required="false"
             />
           </div>
         </div>
         
         <div className="space-y-2">
           <Label htmlFor="amountWords">Amount in Words</Label>
-          <div className="p-2 border rounded-md bg-gray-50 min-h-10 font-mono">
+          <div
+            id="amountWords"
+            className="p-2 border rounded-md bg-gray-50 min-h-10 font-mono"
+            role="status"
+            aria-live="polite"
+            aria-label="Amount in words display"
+          >
             {paddedAmountInWords ? (
               <p className="font-medium text-gray-700">{paddedAmountInWords}</p>
             ) : (
@@ -251,7 +297,7 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
             )}
           </div>
         </div>
-        
+
         <div className="space-y-2">
           <Label htmlFor="memo">Memo (Optional)</Label>
           <Input
@@ -261,17 +307,25 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLo
             value={memo}
             onChange={(e) => setMemo(sanitizeText(e.target.value))}
             maxLength={VALIDATION_RULES.MEMO_MAX_LENGTH}
+            aria-label="Check memo"
+            aria-required="false"
           />
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline" onClick={handleClear} disabled={isLoading}>
+        <Button
+          variant="outline"
+          onClick={handleClear}
+          disabled={isLoading}
+          aria-label="Clear all form fields (Esc)"
+        >
           Clear Form
         </Button>
         <Button
           onClick={handlePrintClick}
           disabled={isLoading}
           className="bg-blue-600 hover:bg-blue-700"
+          aria-label="Print check (Ctrl+P)"
         >
           {isLoading ? 'Preparing...' : 'Print Check'}
         </Button>

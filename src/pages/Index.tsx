@@ -115,52 +115,56 @@ const Index = () => {
           <p className="text-gray-600 mt-2">Print information on pre-printed check forms</p>
         </header>
 
-        <div className="grid grid-cols-1 gap-8">
-          {/* Form to collect check information - hide when preview is shown */}
-          {!showPreview && (
-            <CheckForm
-              onPrint={handleFormSubmit}
-              initialValues={checkData}
-              isLoading={isPreparingPreview}
-            />
-          )}
-
-          {/* Preview with Print/Edit buttons */}
-          {showPreview && (
-            <div>
-              <CheckPreview
-                ref={checkPrintRef}
-                date={checkData.date}
-                payee={checkData.payee}
-                address={checkData.address}
-                city={checkData.city}
-                state={checkData.state}
-                zipCode={checkData.zipCode}
-                amount={checkData.amount}
-                amountInWords={amountInWords}
-                memo={checkData.memo}
+        <main role="main" aria-label="Check writing application">
+          <section className="grid grid-cols-1 gap-8" aria-label={showPreview ? "Check preview" : "Check form"}>
+            {/* Form to collect check information - hide when preview is shown */}
+            {!showPreview && (
+              <CheckForm
+                onPrint={handleFormSubmit}
+                initialValues={checkData}
+                isLoading={isPreparingPreview}
               />
+            )}
 
-              {/* Action buttons for preview */}
-              <div className="flex justify-center gap-4 mt-6">
-                <button
-                  onClick={handleEditClick}
-                  disabled={isPrinting}
-                  className="px-6 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                >
-                  Edit Check
-                </button>
-                <button
-                  onClick={handlePrintClick}
-                  disabled={isPrinting}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                >
-                  {isPrinting ? 'Printing...' : 'Print Check'}
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+            {/* Preview with Print/Edit buttons */}
+            {showPreview && (
+              <article aria-label="Check preview and actions">
+                <CheckPreview
+                  ref={checkPrintRef}
+                  date={checkData.date}
+                  payee={checkData.payee}
+                  address={checkData.address}
+                  city={checkData.city}
+                  state={checkData.state}
+                  zipCode={checkData.zipCode}
+                  amount={checkData.amount}
+                  amountInWords={amountInWords}
+                  memo={checkData.memo}
+                />
+
+                {/* Action buttons for preview */}
+                <nav className="flex justify-center gap-4 mt-6" aria-label="Preview actions">
+                  <button
+                    onClick={handleEditClick}
+                    disabled={isPrinting}
+                    className="px-6 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                    aria-label="Edit check details"
+                  >
+                    Edit Check
+                  </button>
+                  <button
+                    onClick={handlePrintClick}
+                    disabled={isPrinting}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                    aria-label="Print check"
+                  >
+                    {isPrinting ? 'Printing...' : 'Print Check'}
+                  </button>
+                </nav>
+              </article>
+            )}
+          </section>
+        </main>
 
         <footer className="mt-12 text-center text-gray-500 text-sm">
           <p>Position your pre-printed check form in the printer before printing</p>
