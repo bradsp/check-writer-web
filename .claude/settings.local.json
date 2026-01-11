@@ -3,11 +3,9 @@
     "allow": [
       "Skill(taches-cc-resources:run-prompt)",
       "Bash(if not exist analysis mkdir analysis)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
+      "Bash(git:*)",
       "Skill(taches-cc-resources:create-plan)",
       "Skill(taches-cc-resources:create-plans)",
-      "Bash(git rev-parse:*)",
       "Bash(cat:*)",
       "Bash(tree:*)",
       "Bash(npm install:*)",
@@ -18,7 +16,12 @@
       "Bash(npm run build:*)",
       "Bash(npm test:*)",
       "Bash(npm run test:run:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(netstat:*)",
+      "Bash(tasklist:*)",
+      "Bash(ls:*)",
+      "Bash(npm run build:dev:*)",
+      "Bash(npm run lint)"
     ]
   }
 }
