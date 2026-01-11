@@ -107,7 +107,21 @@ dist/assets/index-D-44Rgga.js   426.68 kB │ gzip: 133.88 kB
 
 ## Commits Created
 
-This summary was created before committing changes. Commits will be created next.
+Three commits were created for this implementation:
+
+1. **45a1f1b** - Enable TypeScript strict mode for better type safety
+   - Modified: tsconfig.app.json
+   - Enabled strictNullChecks, noImplicitAny, noUnusedLocals, noUnusedParameters
+
+2. **b0214e2** - Implement dark mode with theme toggle and persistence
+   - Created: src/components/ThemeProvider.tsx, src/components/ThemeToggle.tsx
+   - Modified: src/App.tsx, src/pages/Index.tsx
+   - Full dark mode implementation with theme persistence
+
+3. **08b33c3** - docs: Add Phase 4.1 summary for TypeScript strict mode and dark mode
+   - Created: .planning/phases/04-low-priority/04-01-SUMMARY.md
+   - Modified: .claude/settings.local.json
+   - Documentation of changes and results
 
 ## Deviations
 
