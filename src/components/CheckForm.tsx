@@ -12,11 +12,12 @@ import { padWithAsterisks } from '@/utils/checkFormatting';
 import { CheckData } from '@/types/check';
 
 interface CheckFormProps {
-  onPrint: (values: CheckData) => void;
+  onPrint: (values: CheckData) => void | Promise<void>;
   initialValues?: Partial<CheckData>;
+  isLoading?: boolean;
 }
 
-const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) => {
+const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {}, isLoading = false }) => {
   const { toast } = useToast();
 
   // Use local state for the form (allows real-time input without affecting parent state)
@@ -31,6 +32,11 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
   const [amountInWords, setAmountInWords] = useState<string>('');
   const [paddedAmountInWords, setPaddedAmountInWords] = useState<string>('');
   const amountInputRef = useRef<HTMLInputElement>(null);
+
+  // Field-specific error states
+  const [dateError, setDateError] = useState<string>('');
+  const [payeeError, setPayeeError] = useState<string>('');
+  const [amountError, setAmountError] = useState<string>('');
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -57,43 +63,47 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
   };
 
   const validateForm = (): boolean => {
+    // Clear all errors first
+    setDateError('');
+    setPayeeError('');
+    setAmountError('');
+
+    let hasErrors = false;
+
     // Validate date
     const dateValidation = validateDate(date);
     if (!dateValidation.isValid) {
-      toast({
-        title: "Invalid Date",
-        description: dateValidation.error || "Please enter a valid date.",
-        variant: "destructive"
-      });
-      return false;
+      setDateError(dateValidation.error || 'Please enter a valid date.');
+      hasErrors = true;
     }
 
     // Validate payee
     const payeeValidation = validatePayee(payee);
     if (!payeeValidation.isValid) {
-      toast({
-        title: "Invalid Payee",
-        description: payeeValidation.error || "Please enter a valid payee name.",
-        variant: "destructive"
-      });
-      return false;
+      setPayeeError(payeeValidation.error || 'Please enter a valid payee name.');
+      hasErrors = true;
     }
 
     // Validate amount
     const amountValidation = validateAmount(amount);
     if (!amountValidation.isValid) {
-      toast({
-        title: "Invalid Amount",
-        description: amountValidation.error || "Please enter a valid amount.",
-        variant: "destructive"
-      });
+      setAmountError(amountValidation.error || 'Please enter a valid amount.');
+      hasErrors = true;
       if (amountInputRef.current) {
         amountInputRef.current.focus();
       }
-      return false;
     }
 
-    return true;
+    // Show toast for overall validation failure
+    if (hasErrors) {
+      toast({
+        title: "Validation Error",
+        description: "Please correct the errors below.",
+        variant: "destructive"
+      });
+    }
+
+    return !hasErrors;
   };
 
   const handlePrintClick = () => {
@@ -122,6 +132,10 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
     setMemo('');
     setAmountInWords('');
     setPaddedAmountInWords('');
+    // Clear all errors
+    setDateError('');
+    setPayeeError('');
+    setAmountError('');
   };
 
   return (
@@ -139,7 +153,11 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              className={dateError ? 'border-red-500 focus:ring-red-500' : ''}
             />
+            {dateError && (
+              <p className="text-sm text-red-600 mt-1">{dateError}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="amount">Amount ($)</Label>
@@ -150,8 +168,11 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
               value={amount}
               onChange={handleAmountChange}
               ref={amountInputRef}
-              className="font-medium"
+              className={amountError ? 'border-red-500 focus:ring-red-500 font-medium' : 'font-medium'}
             />
+            {amountError && (
+              <p className="text-sm text-red-600 mt-1">{amountError}</p>
+            )}
           </div>
         </div>
         
@@ -164,7 +185,11 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
             value={payee}
             onChange={(e) => setPayee(sanitizeText(e.target.value))}
             maxLength={VALIDATION_RULES.PAYEE_MAX_LENGTH}
+            className={payeeError ? 'border-red-500 focus:ring-red-500' : ''}
           />
+          {payeeError && (
+            <p className="text-sm text-red-600 mt-1">{payeeError}</p>
+          )}
         </div>
         
         {/* Address Fields */}
@@ -240,12 +265,15 @@ const CheckForm: React.FC<CheckFormProps> = ({ onPrint, initialValues = {} }) =>
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline" onClick={handleClear}>Clear Form</Button>
-        <Button 
-          onClick={handlePrintClick} 
+        <Button variant="outline" onClick={handleClear} disabled={isLoading}>
+          Clear Form
+        </Button>
+        <Button
+          onClick={handlePrintClick}
+          disabled={isLoading}
           className="bg-blue-600 hover:bg-blue-700"
         >
-          Print Check
+          {isLoading ? 'Preparing...' : 'Print Check'}
         </Button>
       </CardFooter>
     </Card>

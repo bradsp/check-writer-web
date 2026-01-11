@@ -25,6 +25,7 @@ const Index = () => {
 
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [isPrinting, setIsPrinting] = useState<boolean>(false);
+  const [isPreparingPreview, setIsPreparingPreview] = useState<boolean>(false);
 
   const checkPrintRef = useRef<HTMLDivElement>(null);
 
@@ -37,40 +38,36 @@ const Index = () => {
     documentTitle: 'Check Print',
     onBeforePrint: () => {
       setIsPrinting(true);
+
+      const validationErrors: string[] = [];
+
       // Validate date
       const dateValidation = validateDate(checkData.date);
       if (!dateValidation.isValid) {
-        toast({
-          title: "Invalid Date",
-          description: dateValidation.error || "Please enter a valid date.",
-          variant: "destructive"
-        });
-        setIsPrinting(false);
-        return Promise.reject('Invalid date');
+        validationErrors.push(`Date: ${dateValidation.error || 'Invalid date'}`);
       }
 
       // Validate payee
       const payeeValidation = validatePayee(checkData.payee);
       if (!payeeValidation.isValid) {
-        toast({
-          title: "Invalid Payee",
-          description: payeeValidation.error || "Please enter a valid payee name.",
-          variant: "destructive"
-        });
-        setIsPrinting(false);
-        return Promise.reject('Invalid payee');
+        validationErrors.push(`Payee: ${payeeValidation.error || 'Invalid payee name'}`);
       }
 
       // Validate amount
       const amountValidation = validateAmount(checkData.amount);
       if (!amountValidation.isValid) {
+        validationErrors.push(`Amount: ${amountValidation.error || 'Invalid amount'}`);
+      }
+
+      // If there are validation errors, show all of them
+      if (validationErrors.length > 0) {
         toast({
-          title: "Invalid Amount",
-          description: amountValidation.error || "Please enter a valid amount.",
+          title: "Validation Failed",
+          description: validationErrors.join(' | '),
           variant: "destructive"
         });
         setIsPrinting(false);
-        return Promise.reject('Invalid amount');
+        return Promise.reject('Validation failed');
       }
 
       return Promise.resolve();
@@ -88,12 +85,18 @@ const Index = () => {
     pageStyle: "@page { size: 8.5in 11in; margin: 0mm; } @page { page-break-after: avoid; }",
   });
 
-  const handleFormSubmit = (formData: CheckData) => {
+  const handleFormSubmit = async (formData: CheckData) => {
+    setIsPreparingPreview(true);
+
+    // Simulate brief preparation time for better UX feedback
+    await new Promise(resolve => setTimeout(resolve, 300));
+
     // Update state with form data using single setState call
     setCheckData(formData);
 
     // Show preview (no longer auto-prints)
     setShowPreview(true);
+    setIsPreparingPreview(false);
   };
 
   const handlePrintClick = () => {
@@ -118,6 +121,7 @@ const Index = () => {
             <CheckForm
               onPrint={handleFormSubmit}
               initialValues={checkData}
+              isLoading={isPreparingPreview}
             />
           )}
 
