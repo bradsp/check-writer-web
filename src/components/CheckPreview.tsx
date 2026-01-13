@@ -111,86 +111,109 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
           </div>
         </div>
 
-        {/* This is the preview that is shown on screen */}
-        <div className="block print:hidden bg-white border rounded-md p-6 mt-4 mx-auto max-w-4xl">
-          <h3 className="text-lg font-semibold text-center mb-4 text-blue-600">Check Preview</h3>
-          
-          {/* Preview of full check page */}
-          <div className="bg-white border-2 border-gray-300 rounded-md overflow-hidden w-full aspect-[8.5/11] flex flex-col">
-            {/* Top Voucher Preview */}
-            <div className="bg-gray-50 p-4 border-b border-gray-300 flex-1 relative">
-              <div className="absolute left-4 top-16">
-                <div className="text-xs mb-1">Date: {formattedDate}</div>
-                <div className="text-xs mb-1">Pay to the Order of: {sanitizedPayee}</div>
-                <div className="text-xs">{sanitizedMemo}</div>
-                <div className="absolute right-0 top-0">
-                  <div className="text-xs">Amount: {formattedAmount}</div>
+        {/* Screen Preview - Uses scaled container to match print positioning exactly */}
+        <div className="block print:hidden bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-md p-6 mt-4 mx-auto max-w-4xl">
+          <h3 className="text-lg font-semibold text-center mb-4 text-blue-600 dark:text-blue-400">Check Preview</h3>
+
+          {/* Scaled wrapper - maintains 8.5:11 aspect ratio */}
+          <div
+            className="relative w-full max-w-[600px] mx-auto border-2 border-gray-300 dark:border-gray-600 rounded-md overflow-hidden bg-white"
+            style={{ aspectRatio: '8.5 / 11' }}
+          >
+            {/*
+              Inner container: actual 8.5in x 11in dimensions, scaled to fit.
+              Uses CSS custom property for dynamic scaling based on container width.
+              The scale is calculated as: containerWidth / 8.5in (where 1in = 96px)
+              For a 600px container: 600 / (8.5 * 96) = 600 / 816 ≈ 0.735
+            */}
+            <div
+              className="absolute inset-0 origin-top-left"
+              style={{
+                width: '8.5in',
+                height: '11in',
+                transform: 'scale(calc(100cqw / 816))',
+              }}
+            >
+              {/* Top Voucher Section - 3.5in height */}
+              <div className="absolute top-0 left-0 right-0 h-[3.5in] bg-gray-100 border-b border-gray-300">
+                <div className="p-4">
+                  <div className="text-xs text-gray-500 mb-2 font-semibold">TOP VOUCHER</div>
+                  <div className="absolute left-4 top-16">
+                    <div className="text-sm mb-1">Date: {formattedDate}</div>
+                    <div className="text-sm mb-1">Pay to: {sanitizedPayee}</div>
+                    <div className="text-sm mb-1">Amount: {formattedAmount}</div>
+                    {sanitizedMemo && <div className="text-sm text-gray-600">Memo: {sanitizedMemo}</div>}
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            {/* Check Preview - Shows only the variable data that will be printed */}
-            <div className="bg-blue-50 p-4 border-y border-blue-400 h-[30%] relative">
-              {/* Background elements representing pre-printed check (for visual reference only) */}
-              <div className="text-[6px] opacity-30 absolute left-2 top-2">
-                <div>Pre-printed sender info</div>
-              </div>
-              
-              <div className="text-[6px] opacity-30 absolute right-2 top-2 text-right">
-                <div>Pre-printed bank info</div>
-                <div>Pre-printed check number</div>
-              </div>
-              
-              {/* Date - proportionally matches print: right-[2.5in] top-[1.25in] */}
-              {/* 2.5/8.5 ≈ 29% from right, 1.25/3.5 ≈ 36% from top */}
-              <div className="absolute right-[29%] top-[36%] text-[7px]">
-                {formattedDate}
+
+              {/* Check Section - 3.5in height (positioned at top-[3.5in]) */}
+              {/*
+                Placeholder background for check stock image.
+                User will replace this with their actual check image later.
+              */}
+              <div className="absolute top-[3.5in] left-0 right-0 h-[3.5in] bg-gray-200 border-y-2 border-dashed border-gray-400">
+                {/* Placeholder indicator */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center text-gray-500 p-4">
+                    <div className="text-lg font-medium mb-1">Check Stock Image Placeholder</div>
+                    <div className="text-sm">Add your check image here</div>
+                  </div>
+                </div>
+
+                {/*
+                  Check data overlay - uses SAME positioning as print view.
+                  These positions match exactly with the print view above.
+                */}
+
+                {/* Date field - matches print: right-[2.5in] top-[1.25in] */}
+                <div className="absolute right-[2.5in] top-[1.25in] text-sm">
+                  {formattedDate === 'Invalid Date' ? (
+                    <span className="text-red-500">Invalid Date</span>
+                  ) : (
+                    <span className="bg-yellow-200/80 px-1">{formattedDate}</span>
+                  )}
+                </div>
+
+                {/* Amount in numbers - matches print: right-[0.5in] top-[1.25in] */}
+                <div className="absolute right-[0.5in] top-[1.25in] text-right text-sm font-bold">
+                  <span className="bg-yellow-200/80 px-1">{formattedAmount}</span>
+                </div>
+
+                {/* Amount in words - matches print: left-10 top-[1.75in] */}
+                <div className="absolute left-10 top-[1.75in] right-36 text-sm font-mono">
+                  <span className="bg-yellow-200/80 px-1">{paddedAmountInWords}</span>
+                </div>
+
+                {/* Payee section - matches print: left-[1.1in] top-[2.05in] */}
+                <div className="absolute left-[1.1in] top-[2.05in] text-sm">
+                  <div className="bg-yellow-200/80 px-1 inline-block">{sanitizedPayee}</div>
+                  {fullAddress && <div className="bg-yellow-200/80 px-1 inline-block mt-0.5">{fullAddress}</div>}
+                  {cityStateZip && <div className="bg-yellow-200/80 px-1 inline-block mt-0.5">{cityStateZip}</div>}
+                </div>
               </div>
 
-              {/* Amount - proportionally matches print: right-[0.5in] top-[1.25in] */}
-              {/* 0.5/8.5 ≈ 6% from right, 1.25/3.5 ≈ 36% from top */}
-              <div className="absolute right-[6%] top-[36%] text-[7px] font-bold">
-                {formattedAmount}
-              </div>
-
-              {/* Amount in words - proportionally matches print: left-10 top-[1.75in] */}
-              {/* left-10 ≈ 5%, 1.75/3.5 = 50% from top */}
-              <div className="absolute left-[5%] right-[12%] top-[50%] text-[7px] font-mono">
-                {paddedAmountInWords}
-                <div className="absolute top-[1px] left-[50%] right-0 border-b border-dotted border-gray-400 h-[1px]"></div>
-              </div>
-
-              {/* Payee - proportionally matches print: left-[1.1in] top-[2.05in] */}
-              {/* 1.1/8.5 ≈ 13% from left, 2.05/3.5 ≈ 59% from top */}
-              <div className="absolute left-[13%] top-[59%] text-[7px]">
-                {sanitizedPayee}<br />
-                {fullAddress && <span>{fullAddress}<br /></span>}
-                {cityStateZip && <span>{cityStateZip}</span>}
-              </div>
-              
-              {/* Pre-printed signature area indicator (visual reference only) */}
-              <div className="text-[5px] opacity-30 absolute right-2 bottom-2">
-                Pre-printed signature line
-              </div>
-            </div>
-            
-            {/* Bottom Voucher Preview */}
-            <div className="bg-gray-50 p-4 flex-1 relative">
-              <div className="absolute left-4 top-16">
-                <div className="text-xs mb-1">Date: {formattedDate}</div>
-                <div className="text-xs mb-1">Pay to the Order of: {sanitizedPayee}</div>
-                <div className="text-xs">{sanitizedMemo}</div>
-                <div className="absolute right-0 top-0">
-                  <div className="text-xs">Amount: {formattedAmount}</div>
+              {/* Bottom Voucher Section - 4in height (positioned at top-[7in]) */}
+              <div className="absolute top-[7in] left-0 right-0 bottom-0 bg-gray-100 border-t border-gray-300">
+                <div className="p-4">
+                  <div className="text-xs text-gray-500 mb-2 font-semibold">BOTTOM VOUCHER</div>
+                  <div className="absolute left-4 top-16">
+                    <div className="text-sm mb-1">Date: {formattedDate}</div>
+                    <div className="text-sm mb-1">Pay to: {sanitizedPayee}</div>
+                    <div className="text-sm mb-1">Amount: {formattedAmount}</div>
+                    {sanitizedMemo && <div className="text-sm text-gray-600">Memo: {sanitizedMemo}</div>}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          
+
           {/* Bottom Note */}
-          <div className="text-sm text-center text-gray-600 mt-4">
+          <div className="text-sm text-center text-gray-600 dark:text-gray-400 mt-4">
             <p>For best results, place the check form in your printer with the top edge going in first.</p>
-            <p className="text-xs mt-1 text-blue-600">Note: This preview shows only the data that will be printed on your pre-printed check stock.</p>
+            <p className="text-xs mt-2 text-blue-600 dark:text-blue-400">
+              Highlighted areas show where data will print on your pre-printed check stock.
+            </p>
           </div>
         </div>
       </div>
