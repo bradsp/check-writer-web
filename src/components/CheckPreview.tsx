@@ -141,24 +141,28 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
                 <div>Pre-printed check number</div>
               </div>
               
-              {/* Date - moved to the left by 1 inch and down .25 inch from previous position */}
-              <div className="absolute right-[40%] top-[25%] text-[7px]">
+              {/* Date - proportionally matches print: right-[2.5in] top-[1.25in] */}
+              {/* 2.5/8.5 ≈ 29% from right, 1.25/3.5 ≈ 36% from top */}
+              <div className="absolute right-[29%] top-[36%] text-[7px]">
                 {formattedDate}
               </div>
-              
-              {/* Amount - moved left .5 inch and down .25 inch from previous position */}
-              <div className="absolute right-[10%] top-[25%] text-[7px] font-bold">
+
+              {/* Amount - proportionally matches print: right-[0.5in] top-[1.25in] */}
+              {/* 0.5/8.5 ≈ 6% from right, 1.25/3.5 ≈ 36% from top */}
+              <div className="absolute right-[6%] top-[36%] text-[7px] font-bold">
                 {formattedAmount}
               </div>
-              
-              {/* Amount in words - moved down .25 inch from previous position */}
-              <div className="absolute left-4 right-8 top-[40%] text-[7px] font-mono">
+
+              {/* Amount in words - proportionally matches print: left-10 top-[1.75in] */}
+              {/* left-10 ≈ 5%, 1.75/3.5 = 50% from top */}
+              <div className="absolute left-[5%] right-[12%] top-[50%] text-[7px] font-mono">
                 {paddedAmountInWords}
                 <div className="absolute top-[1px] left-[50%] right-0 border-b border-dotted border-gray-400 h-[1px]"></div>
               </div>
-              
-              {/* Payee - moved down .25 inch from previous position */}
-              <div className="absolute left-[25%] top-[50%] text-[7px]">
+
+              {/* Payee - proportionally matches print: left-[1.1in] top-[2.05in] */}
+              {/* 1.1/8.5 ≈ 13% from left, 2.05/3.5 ≈ 59% from top */}
+              <div className="absolute left-[13%] top-[59%] text-[7px]">
                 {sanitizedPayee}<br />
                 {fullAddress && <span>{fullAddress}<br /></span>}
                 {cityStateZip && <span>{cityStateZip}</span>}
