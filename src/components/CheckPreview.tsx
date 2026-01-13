@@ -148,19 +148,15 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
               </div>
 
               {/* Check Section - 3.5in height (positioned at top-[3.5in]) */}
-              {/*
-                Placeholder background for check stock image.
-                User will replace this with their actual check image later.
-              */}
-              <div className="absolute top-[3.5in] left-0 right-0 h-[3.5in] bg-gray-200 border-y-2 border-dashed border-gray-400">
-                {/* Placeholder indicator */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center text-gray-500 p-4">
-                    <div className="text-lg font-medium mb-1">Check Stock Image Placeholder</div>
-                    <div className="text-sm">Add your check image here</div>
-                  </div>
-                </div>
-
+              {/* Check stock image background */}
+              <div
+                className="absolute top-[3.5in] left-0 right-0 h-[3.5in] border-y border-gray-300"
+                style={{
+                  backgroundImage: "url('/chk-img.jpg')",
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              >
                 {/*
                   Check data overlay - uses SAME positioning as print view.
                   These positions match exactly with the print view above.
