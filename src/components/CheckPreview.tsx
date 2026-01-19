@@ -152,7 +152,7 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
               <div
                 className="absolute top-[3.5in] left-0 right-0 h-[3.5in] border-y border-gray-300"
                 style={{
-                  backgroundImage: "url('/chk-img.jpg')",
+                  backgroundImage: "url('/check_overlay.png')",
                   backgroundSize: '100% 100%',
                   backgroundPosition: 'top left',
                 }}
