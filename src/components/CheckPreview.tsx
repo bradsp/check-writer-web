@@ -132,10 +132,13 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
                 width: '8.5in',
                 height: '11in',
                 transform: 'scale(calc(100cqw / 816))',
+                backgroundImage: "url('/check_overlay.png')",
+                backgroundSize: '100% 100%',
+                backgroundPosition: 'top left',
               }}
             >
               {/* Top Voucher Section - 3.5in height */}
-              <div className="absolute top-0 left-0 right-0 h-[3.5in] bg-gray-100 border-b border-gray-300">
+              <div className="absolute top-0 left-0 right-0 h-[3.5in] bg-white/80 border-b border-gray-300">
                 <div className="p-4">
                   <div className="text-xs text-gray-500 mb-2 font-semibold">TOP VOUCHER</div>
                   <div className="absolute left-4 top-16">
@@ -148,15 +151,7 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
               </div>
 
               {/* Check Section - 3.5in height (positioned at top-[3.5in]) */}
-              {/* Check stock image background */}
-              <div
-                className="absolute top-[3.5in] left-0 right-0 h-[3.5in] border-y border-gray-300"
-                style={{
-                  backgroundImage: "url('/check_overlay.png')",
-                  backgroundSize: '100% 100%',
-                  backgroundPosition: 'top left',
-                }}
-              >
+              <div className="absolute top-[3.5in] left-0 right-0 h-[3.5in] border-y border-gray-300">
                 {/*
                   Check data overlay - uses SAME positioning as print view.
                   These positions match exactly with the print view above.
@@ -190,7 +185,7 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
               </div>
 
               {/* Bottom Voucher Section - 4in height (positioned at top-[7in]) */}
-              <div className="absolute top-[7in] left-0 right-0 bottom-0 bg-gray-100 border-t border-gray-300">
+              <div className="absolute top-[7in] left-0 right-0 bottom-0 bg-white/80 border-t border-gray-300">
                 <div className="p-4">
                   <div className="text-xs text-gray-500 mb-2 font-semibold">BOTTOM VOUCHER</div>
                   <div className="absolute left-4 top-16">
