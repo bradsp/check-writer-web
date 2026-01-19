@@ -118,7 +118,7 @@ const CheckPreview = forwardRef<HTMLDivElement, CheckPreviewProps>(
           {/* Scaled wrapper - maintains 8.5:11 aspect ratio */}
           <div
             className="relative w-full max-w-[600px] mx-auto border-2 border-gray-300 dark:border-gray-600 rounded-md overflow-hidden bg-white"
-            style={{ aspectRatio: '8.5 / 11' }}
+            style={{ aspectRatio: '8.5 / 11', containerType: 'inline-size' }}
           >
             {/*
               Inner container: actual 8.5in x 11in dimensions, scaled to fit.
