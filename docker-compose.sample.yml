@@ -1,0 +1,10 @@
+services:
+  check-writer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8085:80"
+    restart: unless-stopped
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
