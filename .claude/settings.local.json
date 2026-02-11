@@ -21,7 +21,8 @@
       "Bash(tasklist:*)",
       "Bash(ls:*)",
       "Bash(npm run build:dev:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(powershell -Command:*)"
     ]
   }
 }
